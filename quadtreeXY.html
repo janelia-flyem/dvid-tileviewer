@@ -7,6 +7,7 @@
     <meta name="description" content="DVID Quadtree Viewer" />
 
     <script src="/js/openseadragon/openseadragon.js"></script>
+    <script src="/js/openseadragon/openseadragon-scalebar.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script>
         var slice = 'xy';
@@ -21,14 +22,33 @@
             'yz': 6656
         }
     </script>
-    <title>DVID Server</title>
+    <style media="screen" type="text/css">
+        .toolbar {
+            width: 800px;
+            height: 33px;
+            border: none;
+            color: #333;
+            padding: 4px;
+            background-color: transparent;
+        }
+    </style>
+    <title>OpenSeadragon XY Tile Viewer</title>
 </head>
 
 <body>
 
-<p>OpenSeadragon XY Tile Viewer</p>
+<div id="toolbarDiv" class="toolbar">
+    <span style="float:left;margin:10px 0 0 0">
+        <!--
+        &lt;&nbsp;
+        <a id="previous" href="#previous-page">Previous</a>
+        | <a id="next" href="#next-page">Next</a>
+        &nbsp;&gt;
+        -->
+        <span id="slice"></span>
+    </span>
+</div>
 <div id="viewer" class="openseadragon" style="background-color:#000000; width:1000px; height:800px"></div>
-<p id="slice"></p>
 
 <script>
     function generateXYFunc(z) {
@@ -38,6 +58,7 @@
     }
     var viewer = {
         z: 2000,
+        nmPerPixel: 10,
         tileSource: {
             height: volumeHeight[slice],
             width:  volumeWidth[slice],
@@ -48,7 +69,7 @@
             getTileUrl: generateXYFunc(2000)
         }
     };
-    $('#slice').replaceWith('<p id="slice">' + slice + ' slice @ Z = ' + viewer.z + '</p>');
+    $('#slice').replaceWith('<span id="slice">' + slice + ' slice @ Z = ' + viewer.z + '</span>');
     $('body').keypress(function(e) {
         var code = e.keyCode || e.which;
         switch (code) {
@@ -65,14 +86,20 @@
                 viewer.xy.open(viewer.tileSource);
                 break;
         }
-        $('#slice').replaceWith('<p id="slice">' + slice + ' slice @ Z = ' + viewer.z + '</p>');
+        $('#slice').replaceWith('<span id="slice">' + slice + ' slice @ Z = ' + viewer.z + '</span>');
     });
     viewer.xy = OpenSeadragon({
         id:            "viewer",
         prefixUrl:     "/js/openseadragon/images/",
         navigatorSizeRatio: 0.25,
         wrapHorizontal:     false,
-        tileSources: viewer.tileSource
+        tileSources: viewer.tileSource,
+        showNavigator: true
+    });
+    viewer.xy.scalebar({
+        pixelsPerMeter: 1000000000/viewer.nmPerPixel,
+        fontColor: "yellow",
+        color: "yellow"
     });
 </script>
 </body>
