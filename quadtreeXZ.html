@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="DVID Quadtree Viewer" />
+
+    <script src="/js/openseadragon/openseadragon.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+        var slice = 'xz';
+        var volumeWidth = {
+            'xy': 3584,
+            'xz': 3584,
+            'yz': 3072
+        };
+        var volumeHeight = {
+            'xy': 3072,
+            'xz': 6656,
+            'yz': 6656
+        }
+    </script>
+    <title>DVID Server</title>
+</head>
+
+<body>
+
+<p>OpenSeadragon XZ Tile Viewer</p>
+<div id="viewer" class="openseadragon" style="background-color:#000000; width:1000px; height:800px"></div>
+<p id="slice"></p>
+
+<script>
+    function generateXZFunc(y) {
+        return function(level, planeX, planeY) {
+            return "http://localhost:8000/api/node/6c/tiles/tile/xz/" + (3-level) + "/" + planeX + "_" + y + "_" + (2+planeY);
+        }
+    }
+    var viewer = {
+        y: 2000,
+        tileSource: {
+            height: volumeHeight[slice],
+            width:  volumeWidth[slice],
+            tileSize: 512,
+            minLevel: 0,
+            maxLevel: 3,
+            // getTileAtPoint: function(level, point) { Add offset to compute tiles }
+            getTileUrl: generateXZFunc(2000)
+        }
+    };
+    $('#slice').replaceWith('<p id="slice">' + slice + ' slice @ Y = ' + viewer.y + '</p>');
+    $('body').keypress(function(e) {
+        var code = e.keyCode || e.which;
+        switch (code) {
+            case 38: // up
+                viewer.y++;
+                viewer.tileSource.getTileUrl = generateXZFunc(viewer.y);
+                viewer.xy.open(viewer.tileSource);
+                break;
+            case 40: // down
+                viewer.y--;
+                viewer.tileSource.getTileUrl = generateXZFunc(viewer.y);
+                viewer.xy.open(viewer.tileSource);
+                break;
+        }
+        $('#slice').replaceWith('<p id="slice">' + slice + ' slice @ Y = ' + viewer.y + '</p>');
+    });
+    viewer.xy = OpenSeadragon({
+        id:            "viewer",
+        prefixUrl:     "/js/openseadragon/images/",
+        navigatorSizeRatio: 0.25,
+        wrapHorizontal:     false,
+        tileSources: viewer.tileSource
+    });
+</script>
+</body>
+</html>
