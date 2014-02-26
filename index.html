@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app>
 
 <head>
     <meta charset='utf-8' />
@@ -8,9 +8,9 @@
 
     <script src="/quadtree/js/openseadragon/openseadragon.js"></script>
     <script src="/quadtree/js/openseadragon/openseadragon-scalebar.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+    <script src="/js/angular-1.2.12.min.js"></script>
     <script>
-        var slice = 'xy';
         var volumeWidth = {
             'xy': 3584,
             'xz': 3584,
@@ -20,7 +20,7 @@
             'xy': 3072,
             'xz': 6656,
             'yz': 6656
-        }
+        };
     </script>
     <style media="screen" type="text/css">
         .toolbar {
@@ -32,46 +32,67 @@
             background-color: transparent;
         }
     </style>
-    <title>OpenSeadragon XY Tile Viewer</title>
+    <title>OpenSeadragon Tile Viewer</title>
 </head>
 
 <body>
 
-<div id="toolbarDiv" class="toolbar">
+<div id="toolbarDiv" class="toolbar" ng-controller="ToolbarController">
     <span style="float:left;margin:10px 0 0 0">
         <!--
         &lt;&nbsp;
         <a id="previous" href="#previous-page">Previous</a>
         | <a id="next" href="#next-page">Next</a>
         &nbsp;&gt;
+        <input type="text" ng-model="viewer.plane" style="width:60px" />
+        <input type="text" ng-model="viewer.slice" style="width:60px" />
         -->
-        <span id="slice"></span>
     </span>
 </div>
 <div id="viewer" class="openseadragon" style="background-color:#000000; width:1000px; height:800px"></div>
 
 <script>
+    function getQueryStrings() {
+        var vars = [], hash;
+        var q = document.URL.split('?')[1];
+        if (q != undefined) {
+            q = q.split('&');
+            for (var i = 0; i < q.length; i++) {
+                hash = q[i].split('=');
+                vars.push(hash[1]);
+                vars[hash[0]] = hash[1];
+            }
+        }
+        return vars;
+    }
     function generateXYFunc(z) {
+        console.log("generateXYFunc", z);
+        var vars = getQueryStrings();
+        var uuid = vars['uuid'];
+        var name = vars['name'];
         return function(level, x, y) {
-            return "http://localhost:8000/api/node/6a/tiles/tile/xy/" + (3-level) + "/" + x + "_" + y + "_" + z;
+            return "http://localhost:8000/api/node/" + uuid + "/" + name + "/tile/xy/" + (3-level) + "/" + x + "_" + y + "_" + z;
         }
     }
     var viewer = {
-        z: 2000,
-        nmPerPixel: 10,
+        plane: 'xy',
+        slice: 2000,
         tileSource: {
-            height: volumeHeight[slice],
-            width:  volumeWidth[slice],
+            height: volumeHeight['xy'],
+            width:  volumeWidth['xy'],
             tileSize: 512,
             minLevel: 0,
             maxLevel: 3,
             // getTileAtPoint: function(level, point) { Add offset to compute tiles }
             getTileUrl: generateXYFunc(2000)
         }
-    };
-    $('#slice').replaceWith('<span id="slice">' + slice + ' slice @ Z = ' + viewer.z + '</span>');
+    }
+    function ToolbarController($scope) {
+        $scope.viewer = viewer;
+    }
     $('body').keypress(function(e) {
         var code = e.keyCode || e.which;
+        console.log("Got keypress: ", code);
         switch (code) {
             case 38: // up
                 viewer.z++;
