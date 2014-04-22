@@ -6,21 +6,29 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="description" content="DVID Quadtree Viewer" />
 
-    <script src="/js/openseadragon/openseadragon.js"></script>
-    <script src="/js/openseadragon/openseadragon-scalebar.js"></script>
+    <script src="/tileviewer/js/openseadragon/openseadragon.js"></script>
+    <script src="/tileviewer/js/openseadragon/openseadragon-scalebar.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script>
+        var dataname = 'graytiles2';
         var slice = 'xy';
+        var url = 'http://emdata1.int.janelia.org:9000';
         var volumeWidth = {
-            'xy': 3584,
-            'xz': 3584,
-            'yz': 3072
+            'xy': 15136,
+            'xz': 15136,
+            'yz': 14120
         };
         var volumeHeight = {
-            'xy': 3072,
-            'xz': 6656,
-            'yz': 6656
+            'xy': 14120,
+            'xz': 8895,
+            'yz': 8895
         }
+        var volumeDepth = {
+            'xy': 8895,
+            'xz': 14120,
+            'yz': 15136
+        }
+        var numLevels = 5;
     </script>
     <style media="screen" type="text/css">
         .toolbar {
@@ -60,12 +68,12 @@
             width:     volumeWidth[slice],
             tileSize:  512,
             minLevel:  0,
-            maxLevel:  3,
-            minZ:      1490,
-            maxZ:      8009,
+            maxLevel:  numLevels - 1,
+            minZ:      0,
+            maxZ:      volumeDepth[slice]-1,
             // getTileAtPoint: function(level, point) { Add offset to compute tiles }
             getTileUrl: function xyTileURL(level, x, y, z) {
-                return "http://localhost:8000/api/node/8d6/graytiles/tile/xy/" + (3-level) + "/" + x + "_" + y + "_" + z;
+                return url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice + "/" + (numLevels-level) + "/" + x + "_" + y + "_" + z;
             }
         }
     };
