@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="description" content="DVID Quadtree Viewer" />
 
-    <script src="/quadtree/js/openseadragon/openseadragon.js"></script>
-    <script src="/quadtree/js/openseadragon/openseadragon-scalebar.js"></script>
+    <script src="/js/openseadragon/openseadragon.js"></script>
+    <script src="/js/openseadragon/openseadragon-scalebar.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script>
         var slice = 'xy';
@@ -48,58 +48,40 @@
         <span id="slice"></span>
     </span>
 </div>
+
 <div id="viewer" class="openseadragon" style="background-color:#000000; width:1000px; height:800px"></div>
 
+
 <script>
-    function generateXYFunc(z) {
-        return function(level, x, y) {
-            return "http://localhost:8000/api/node/6c/tiles/tile/xy/" + (3-level) + "/" + x + "_" + y + "_" + z;
-        }
-    }
     var viewer = {
-        z: 2000,
         nmPerPixel: 10,
         tileSource: {
-            height: volumeHeight[slice],
-            width:  volumeWidth[slice],
-            tileSize: 512,
-            minLevel: 0,
-            maxLevel: 3,
+            height:    volumeHeight[slice],
+            width:     volumeWidth[slice],
+            tileSize:  512,
+            minLevel:  0,
+            maxLevel:  3,
+            minZ:      1490,
+            maxZ:      8009,
             // getTileAtPoint: function(level, point) { Add offset to compute tiles }
-            getTileUrl: generateXYFunc(2000)
+            getTileUrl: function xyTileURL(level, x, y, z) {
+                return "http://localhost:8000/api/node/8d6/graytiles/tile/xy/" + (3-level) + "/" + x + "_" + y + "_" + z;
+            }
         }
     };
-    $('#slice').replaceWith('<span id="slice">' + slice + ' slice @ Z = ' + viewer.z + '</span>');
-    $('body').keypress(function(e) {
-        var code = e.keyCode || e.which;
-        switch (code) {
-            case 38: // up
-                viewer.z++;
-                console.log("Setting z to ", viewer.z);
-                viewer.tileSource.getTileUrl = generateXYFunc(viewer.z);
-                viewer.xy.open(viewer.tileSource);
-                break;
-            case 40: // down
-                viewer.z--;
-                console.log("Setting z to ", viewer.z);
-                viewer.tileSource.getTileUrl = generateXYFunc(viewer.z);
-                viewer.xy.open(viewer.tileSource);
-                break;
-        }
-        $('#slice').replaceWith('<span id="slice">' + slice + ' slice @ Z = ' + viewer.z + '</span>');
-    });
     viewer.xy = OpenSeadragon({
-        id:            "viewer",
-        prefixUrl:     "/quadtree/js/openseadragon/images/",
+        id:                 "viewer",
+        prefixUrl:          "/js/openseadragon/images/",
         navigatorSizeRatio: 0.25,
         wrapHorizontal:     false,
-        tileSources: viewer.tileSource,
-        showNavigator: true
+        maxZoomPixelRatio:  5.0,
+        showNavigator:      true,
+        tileSources:        viewer.tileSource
     });
     viewer.xy.scalebar({
         pixelsPerMeter: 1000000000/viewer.nmPerPixel,
-        fontColor: "yellow",
-        color: "yellow"
+        fontColor:      "yellow",
+        color:          "yellow"
     });
 </script>
 </body>
