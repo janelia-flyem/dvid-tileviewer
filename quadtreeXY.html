@@ -8,11 +8,17 @@
 
     <script src="/tileviewer/js/openseadragon/openseadragon.js"></script>
     <script src="/tileviewer/js/openseadragon/openseadragon-scalebar.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <script src="/js/jquery-2.1.0.min.js"></script> 
+    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    
+    <script src="/js/angular.min.js"></script>
     <script>
-        var dataname = 'graytiles2';
+        var uuid = 'c2cec';
+        var dataname = 'graytiles';
         var slice = 'xy';
-        var url = 'http://emdata1.int.janelia.org:9000';
+        var url = 'http://emdata1.int.janelia.org';
         var volumeWidth = {
             'xy': 15136,
             'xz': 15136,
@@ -28,7 +34,31 @@
             'xz': 14120,
             'yz': 15136
         }
-        var numLevels = 5;
+        var numLevels = 6;
+        
+        function generateXYFunc(z) {
+            console.log("generateXYFunc", z);
+            return function(level, x, y) {
+                return url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice + "/" + (numLevels-level-1) + "/" + x + "_" + y + "_" + z;
+            }
+        }
+        
+        $(function() {
+          $( "#slider-range-max" ).slider({
+             range: "max",
+             min: 0,
+             max: 8895,
+             value: 0,
+             slide: function( event, ui ) {
+               $( "#slice" ).val( ui.value );
+               z = ui.value;
+               console.log("In slider event: setting z to", ui.value);
+               viewer.tileSource.getTileUrl = generateXYFunc(z);
+               viewer.xy.open(viewer.tileSource);
+             }
+           });
+         $( "#slice" ).val( $( "#slider-range-max" ).slider( "value" ) );
+        });
     </script>
     <style media="screen" type="text/css">
         .toolbar {
@@ -44,6 +74,13 @@
 </head>
 
 <body>
+
+<p>
+  <label for="slice">FIB-19 grayscale for slice:</label>
+  <input type="text" id="slice" style="border:0; color:#f6931f; font-weight:bold;">
+</p>
+<div id="slider-range-max" style="margin:0 20px 0 20px"></div>
+<br />
 
 <div id="toolbarDiv" class="toolbar">
     <span style="float:left;margin:10px 0 0 0">
@@ -69,11 +106,12 @@
             tileSize:  512,
             minLevel:  0,
             maxLevel:  numLevels - 1,
+            z:         0,
             minZ:      0,
             maxZ:      volumeDepth[slice]-1,
             // getTileAtPoint: function(level, point) { Add offset to compute tiles }
-            getTileUrl: function xyTileURL(level, x, y, z) {
-                return url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice + "/" + (numLevels-level) + "/" + x + "_" + y + "_" + z;
+            getTileUrl: function(level, x, y, z) {
+                return url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice + "/" + (numLevels-level-1) + "/" + x + "_" + y + "_" + z;
             }
         }
     };
