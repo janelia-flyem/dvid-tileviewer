@@ -6,28 +6,28 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="description" content="DVID Quadtree Viewer" />
 
-    <script src="/tileviewer/js/openseadragon/openseadragon.js"></script>
-    <script src="/tileviewer/js/openseadragon/openseadragon-scalebar.js"></script>
+    <script src="/js/openseadragon/openseadragon.js"></script>
+    <script src="/js/openseadragon/openseadragon-scalebar.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script>
         var dataname = 'graytiles';
-        var uuid = '100';
+        var uuid = '2b6';
         var slice = 'xy';
-        var url = 'http://emdata1.int.janelia.org:9000';
+        var url = 'http://emdata2.int.janelia.org';
         var volumeWidth = {
-            'xy': 15136,
-            'xz': 15136,
-            'yz': 14120
+            'xy': 6445,
+            'xz': 6445,
+            'yz': 6642
         };
         var volumeHeight = {
-            'xy': 14120,
-            'xz': 8895,
-            'yz': 8895
+            'xy': 6642,
+            'xz': 8089,
+            'yz': 8089
         }
         var volumeDepth = {
-            'xy': 8895,
-            'xz': 14120,
-            'yz': 15136
+            'xy': 8089,
+            'xz': 6642,
+            'yz': 6445
         }
         var maxLevel = 4;  // zero-indexed
     </script>
@@ -63,34 +63,34 @@
 
 <script>
     var viewer = {
-        nmPerPixel: 10,
-        tileSource: {
-            height:    volumeHeight[slice],
-            width:     volumeWidth[slice],
-            tileSize:  512,
-            minLevel:  0,
-            maxLevel:  maxLevel,
-            minZ:      0,
-            maxZ:      volumeDepth[slice]-1,
-            // getTileAtPoint: function(level, point) { Add offset to compute tiles }
-            getTileUrl: function xyTileURL(level, x, y, z) {
-                return url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
-            }
+      nmPerPixel: 10,
+      tileSource: {
+        height:    volumeHeight[slice],
+        width:     volumeWidth[slice],
+        tileSize:  512,
+        minLevel:  0,
+        maxLevel:  maxLevel,
+        minZ:      0,
+        maxZ:      volumeDepth[slice]-1,
+        // getTileAtPoint: function(level, point) { Add offset to compute tiles }
+        getTileUrl: function xyTileURL(level, x, y, z) {
+          return url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
         }
+      }
     };
     viewer.xy = OpenSeadragon({
-        id:                 "viewer",
-        prefixUrl:          "/tileviewer/js/openseadragon/images/",
-        navigatorSizeRatio: 0.25,
-        wrapHorizontal:     false,
-        maxZoomPixelRatio:  5.0,
-        showNavigator:      true,
-        tileSources:        viewer.tileSource
+      id:                 "viewer",
+      prefixUrl:          "/js/openseadragon/images/",
+      navigatorSizeRatio: 0.25,
+      wrapHorizontal:     false,
+      maxZoomPixelRatio:  5.0,
+      showNavigator:      true,
+      tileSources:        viewer.tileSource
     });
     viewer.xy.scalebar({
-        pixelsPerMeter: 1000000000/viewer.nmPerPixel,
-        fontColor:      "yellow",
-        color:          "yellow"
+      pixelsPerMeter: 1000000000/viewer.nmPerPixel,
+      fontColor:      "yellow",
+      color:          "yellow"
     });
 </script>
 </body>
