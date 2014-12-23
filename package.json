@@ -1,0 +1,28 @@
+{
+  "name": "dvid-tileviewer",
+  "version": "0.2.0",
+  "description": "A client side tile viewer for tile set data in DVID",
+  "main": "js/app.js",
+  "devDependencies": {
+    "reactify": "^0.17.1",
+    "browserify": "^7.0.3",
+    "webify": "^1.0.0",
+    "watchify": "^2.2.1",
+    "envify": "^3.2.0"
+  },
+  "scripts": {
+    "start": "watchify -o js/bundle.js -v -d ."
+  },
+  "license": "Janelia",
+  "dependencies": {
+    "react": "^0.12.2",
+    "react-router": "^0.11.6"
+  },
+  "author": "Jody Clements",
+  "browserify": {
+    "transform": [
+      "reactify",
+      "envify"
+    ]
+  }
+}
