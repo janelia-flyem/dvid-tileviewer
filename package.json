@@ -16,7 +16,8 @@
   "license": "Janelia",
   "dependencies": {
     "react": "^0.12.2",
-    "react-router": "^0.11.6"
+    "react-router": "^0.11.6",
+    "react-bootstrap": "^0.13.0"
   },
   "author": "Jody Clements",
   "browserify": {
