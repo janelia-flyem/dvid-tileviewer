@@ -5,27 +5,24 @@ var React = require('react'),
   DefaultRoute = Router.DefaultRoute,
   Link = Router.Link,
   RouteHandler = Router.RouteHandler,
-  TileMap = require('./TileMap.react');
-  Home = require('./Home.react');
+  TileMap = require('./TileMap.react'),
+  Home = require('./Home.react'),
+  Nav  = require('./Navigation.react');
 
 var TileViewerApp = React.createClass({
   render: function () {
     return (
       <div>
-        <header>
-          <ul>
-            <li><Link to="tileviewerapp">Home</Link></li>
-          </ul>
-        </header>
+        <Nav />
 
-        {/* this is the important part */}
-        <RouteHandler/>
+        <div className="container-fluid">
+          {/* this is the important part for route handling */}
+          <RouteHandler/>
+        </div>
       </div>
     );
   }
 });
-
-
 
 var routes = (
   <Route name="tileviewerapp" path="/" handler={TileViewerApp}>
