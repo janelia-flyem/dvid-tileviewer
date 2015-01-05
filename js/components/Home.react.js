@@ -1,4 +1,6 @@
-var React = require('react');
+var React = require('react'),
+  Router = require('react-router'),
+  Link   = Router.Link;
 
 var Home = React.createClass({
   getInitialState: function() {
@@ -21,15 +23,22 @@ var Home = React.createClass({
   }
 });
 
+var ItemWrapper = React.createClass({
+  render: function() {
+    return (
+      <li><Link to="tilemap" params={{uuid: this.props.data}}>{this.props.data}</Link></li>
+    );
+  }
+});
+
 var UUIDList = React.createClass({
   render: function() {
-    var renderItem = function(uuid) {
-      return (
-        <li>{uuid}</li>
-      );
-    };
     return (
-      <ul>{this.props.items.map(renderItem)}</ul>
+      <ul>
+        {this.props.items.map(function(object) {
+           return <ItemWrapper key={object} data={object}/>;
+        })}
+      </ul>
     );
   }
 });

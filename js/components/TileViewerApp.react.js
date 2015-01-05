@@ -27,7 +27,7 @@ var TileViewerApp = React.createClass({
 
 var routes = (
   <Route name="tileviewerapp" path="/" handler={TileViewerApp}>
-    <Route name="uuid" path="uuid/:uuid" handler={TileMap}/>
+    <Route name="tilemap" path="uuid/:uuid" handler={TileMap}/>
     <DefaultRoute handler={Home}/>
     <NotFoundRoute handler={NotFound}/>
   </Route>
