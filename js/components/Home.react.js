@@ -1,5 +1,6 @@
 var React = require('react'),
   Router = require('react-router'),
+  config = require('../common/config');
   Link   = Router.Link;
 
 var Home = React.createClass({
@@ -12,7 +13,7 @@ var Home = React.createClass({
 
   // this gets called after the fist time the component is loaded into the page.
   componentDidMount: function () {
-    $.get('http://localhost:8000/api/repos/info', function(result) {
+    $.get(config.reposInfoUrl(), function(result) {
       var repos = result;
       if (this.isMounted()) {
         var repolist = [];

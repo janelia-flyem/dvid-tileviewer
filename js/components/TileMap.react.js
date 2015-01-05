@@ -1,5 +1,6 @@
 var React = require('react'),
-  Router = require('react-router');
+  Router = require('react-router'),
+  config = require('../common/config');
 
 var TileMap = React.createClass({
   mixins: [Router.State],
@@ -12,8 +13,7 @@ var TileMap = React.createClass({
   },
 
   componentDidMount: function () {
-    var uri = 'http://localhost:8000/api/repo/' + this.state.uuid  + '/info';
-    $.get(uri, function(result) {
+    $.get(config.repoInfoUrl(this.state.uuid), function(result) {
       var repo = result;
       if (this.isMounted()) {
         this.setState({
