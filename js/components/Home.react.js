@@ -14,7 +14,6 @@ var Home = React.createClass({
   componentDidMount: function () {
     $.get('http://localhost:8000/api/repos/info', function(result) {
       var repos = result;
-      console.log(repos);
       if (this.isMounted()) {
         var repolist = [];
         for (var repo in repos) {
