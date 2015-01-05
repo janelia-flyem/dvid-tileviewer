@@ -19,7 +19,7 @@ var Home = React.createClass({
         var repolist = [];
         for (var repo in repos) {
           if (repos.hasOwnProperty(repo)) {
-            repolist.push(repo);
+            repolist.push({key: repo, uuid: repo, alias: repos[repo].Alias});
           }
         }
         this.setState({
@@ -43,7 +43,7 @@ var Home = React.createClass({
 var ItemWrapper = React.createClass({
   render: function() {
     return (
-      <li><Link to="tilemap" params={{uuid: this.props.data}}>{this.props.data}</Link></li>
+      <li><Link to="tilemap" params={{uuid: this.props.data.uuid}}>{this.props.data.alias}</Link> - {this.props.data.uuid} </li>
     );
   }
 });
@@ -53,7 +53,7 @@ var UUIDList = React.createClass({
     return (
       <ul>
         {this.props.items.map(function(object) {
-           return <ItemWrapper key={object} data={object}/>;
+           return <ItemWrapper data={object}/>;
         })}
       </ul>
     );

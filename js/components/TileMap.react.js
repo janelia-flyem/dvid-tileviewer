@@ -28,7 +28,13 @@ var TileMap = React.createClass({
     return (
       <div>
         <h1>Tile map</h1>
-        <div>{this.state.uuid} - {this.state.repo['Created']}</div>
+        <div>
+          <ul>
+            <li>Alias: {this.state.repo.Alias}</li>
+            <li>UUID: {this.state.uuid}</li>
+            <li>Created: {this.state.repo.Created}</li>
+          </ul>
+        </div>
       </div>
     );
   }
