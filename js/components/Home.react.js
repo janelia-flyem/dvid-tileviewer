@@ -5,13 +5,30 @@ var React = require('react'),
 var Home = React.createClass({
   getInitialState: function() {
     return {
-      uuids: [
-        '134c8f09429311e4a83dc81f66eb987e',
-        '2b6c789448c911e4ad8cc81f66eb987e'
-      ],
+      uuids: [],
       text: 'UUID list'
     };
   },
+
+  // this gets called after the fist time the component is loaded into the page.
+  componentDidMount: function () {
+    $.get('http://localhost:8000/api/repos/info', function(result) {
+      var repos = result;
+      console.log(repos);
+      if (this.isMounted()) {
+        var repolist = [];
+        for (var repo in repos) {
+          if (repos.hasOwnProperty(repo)) {
+            repolist.push(repo);
+          }
+        }
+        this.setState({
+          uuids: repolist
+        });
+      }
+    }.bind(this));
+  },
+
   render: function () {
     return (
       <div>
