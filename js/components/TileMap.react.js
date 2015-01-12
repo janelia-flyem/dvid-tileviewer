@@ -1,5 +1,6 @@
 var React = require('react'),
   Router = require('react-router'),
+  TileMapArea = require('./TileMapArea.react'),
   config = require('../common/config');
 
 var TileMap = React.createClass({
@@ -23,12 +24,8 @@ var TileMap = React.createClass({
         });
       }
     }.bind(this));
-    console.log('initalize tileviewer code here');
   },
 
-  componentWillUnmount: function() {
-    console.log('stop tile viewer code');
-  },
 
   render: function () {
     return (
@@ -45,7 +42,7 @@ var TileMap = React.createClass({
           </ul>
         </div>
         <div>
-          <TileMapArea instances={this.state.repo.DataInstances}/>
+          <TileMapArea instances={this.state.repo.DataInstances} uuid={this.state.uuid}/>
         </div>
       </div>
     );
@@ -54,23 +51,6 @@ var TileMap = React.createClass({
 
 module.exports = TileMap;
 
-var TileMapArea = React.createClass({
-  render: function() {
-    if (this.props.instances.hasOwnProperty('graytiles')) {
-      return (
-          <div>
-            <p>Tilemap image viewer goes here</p>
-            <div id="viewer" className="openseadragon"></div>
-          </div>
-      );
-    }
-    else {
-      return (
-          <p>no graytiles data set.</p>
-      );
-    }
-  }
-});
 
 
 var DataInstances = React.createClass({
