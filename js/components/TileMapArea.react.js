@@ -1,29 +1,78 @@
-var React = require('react'),
-  Router = require('react-router'),
-  config = require('../common/config'),
-  viewer = null;
+var React  = require('react'),
+  Router   = require('react-router'),
+  config   = require('../common/config'),
+  dataname = 'graytiles',
+  slice    = 'xy',
+  maxLevel = 4,
+  viewer   = null;
 
 var TileMapArea = React.createClass({
-  componentDidMount: function () {
+
+  componentDidUpdate: function () {
     var uuid = this.props.uuid;
-    console.log('start tileviewer code here for: ' + uuid);
     // set the variables for the tile viewer based on data fetched from the server
+    var url = config.baseUrl();
+    var volumeWidth = {
+        'xy': 6445,
+        'xz': 6445,
+        'yz': 6642
+    };
+    var volumeHeight = {
+        'xy': 6642,
+        'xz': 8089,
+        'yz': 8089
+    }
+    var volumeDepth = {
+        'xy': 8089,
+        'xz': 6642,
+        'yz': 6445
+    }
+
+    viewer = {
+      nmPerPixel: 10,
+      tileSource: {
+        height:    volumeHeight[slice],
+        width:     volumeWidth[slice],
+        tileSize:  512,
+        minLevel:  0,
+        maxLevel:  maxLevel,
+        minZ:      0,
+        maxZ:      volumeDepth[slice]-1,
+        // getTileAtPoint: function(level, point) { Add offset to compute tiles }
+        getTileUrl: function xyTileURL(level, x, y, z) {
+          return url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+        }
+      }
+    };
+    viewer.xy = OpenSeadragon({
+      id:                 "viewer",
+      prefixUrl:          "/js/openseadragon/images/",
+      navigatorSizeRatio: 0.25,
+      wrapHorizontal:     false,
+      maxZoomPixelRatio:  5.0,
+      showNavigator:      true,
+      tileSources:        viewer.tileSource
+    });
+    viewer.xy.scalebar({
+      pixelsPerMeter: 1000000000/viewer.nmPerPixel,
+      fontColor:      "yellow",
+      color:          "yellow"
+    });
 
   },
 
   componentWillUnmount: function() {
-    console.log('stop tileviewer code');
-    if (viewer) {
-      viewer.destroy();
+    console.log(viewer);
+    if (viewer && viewer.xy) {
+      viewer.xy.destroy();
       viewer = null;
     }
   },
 
   render: function() {
-    if (this.props.instances.hasOwnProperty('graytiles')) {
+    if (this.props.instances.hasOwnProperty(dataname)) {
       return (
           <div>
-            <p>Tilemap image viewer goes here</p>
             <div id="viewer" className="openseadragon"></div>
           </div>
       );
