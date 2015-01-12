@@ -30,6 +30,61 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/openseadragon/openseadragon.js"></script>
+    <script src="js/openseadragon/openseadragon-scalebar.js"></script>
     <script src="js/bundle.js"></script>
+    <script>
+/*        var dataname = 'graytiles';
+        var uuid = '2b6';
+        var slice = 'xy';
+        var url = 'http://emdata2.int.janelia.org';
+        var volumeWidth = {
+            'xy': 6445,
+            'xz': 6445,
+            'yz': 6642
+        };
+        var volumeHeight = {
+            'xy': 6642,
+            'xz': 8089,
+            'yz': 8089
+        }
+        var volumeDepth = {
+            'xy': 8089,
+            'xz': 6642,
+            'yz': 6445
+        }
+
+        var maxLevel = 4;  // zero-indexed
+        var viewer = {
+          nmPerPixel: 10,
+          tileSource: {
+            height:    volumeHeight[slice],
+            width:     volumeWidth[slice],
+            tileSize:  512,
+            minLevel:  0,
+            maxLevel:  maxLevel,
+            minZ:      0,
+            maxZ:      volumeDepth[slice]-1,
+            // getTileAtPoint: function(level, point) { Add offset to compute tiles }
+            getTileUrl: function xyTileURL(level, x, y, z) {
+              return url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+            }
+          }
+        };
+        viewer.xy = OpenSeadragon({
+          id:                 "viewer",
+          prefixUrl:          "/js/openseadragon/images/",
+          navigatorSizeRatio: 0.25,
+          wrapHorizontal:     false,
+          maxZoomPixelRatio:  5.0,
+          showNavigator:      true,
+          tileSources:        viewer.tileSource
+        });
+        viewer.xy.scalebar({
+          pixelsPerMeter: 1000000000/viewer.nmPerPixel,
+          fontColor:      "yellow",
+          color:          "yellow"
+        }); */
+    </script>
   </body>
 </html>

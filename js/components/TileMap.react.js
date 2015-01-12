@@ -23,6 +23,11 @@ var TileMap = React.createClass({
         });
       }
     }.bind(this));
+    console.log('initalize tileviewer code here');
+  },
+
+  componentWillUnmount: function() {
+    console.log('stop tile viewer code');
   },
 
   render: function () {
@@ -39,12 +44,34 @@ var TileMap = React.createClass({
             </li>
           </ul>
         </div>
+        <div>
+          <TileMapArea instances={this.state.repo.DataInstances}/>
+        </div>
       </div>
     );
   }
 });
 
 module.exports = TileMap;
+
+var TileMapArea = React.createClass({
+  render: function() {
+    if (this.props.instances.hasOwnProperty('graytiles')) {
+      return (
+          <div>
+            <p>Tilemap image viewer goes here</p>
+            <div id="viewer" className="openseadragon"></div>
+          </div>
+      );
+    }
+    else {
+      return (
+          <p>no graytiles data set.</p>
+      );
+    }
+  }
+});
+
 
 var DataInstances = React.createClass({
   render: function() {
