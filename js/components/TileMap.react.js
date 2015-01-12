@@ -8,7 +8,9 @@ var TileMap = React.createClass({
   getInitialState: function() {
     return {
       uuid: this.getParams().uuid,
-      repo: {}
+      repo: {
+        DataInstances: {}
+      }
     };
   },
 
@@ -24,7 +26,6 @@ var TileMap = React.createClass({
   },
 
   render: function () {
-    console.log(this);
     return (
       <div>
         <h1>Tile map</h1>
@@ -33,6 +34,9 @@ var TileMap = React.createClass({
             <li>Alias: {this.state.repo.Alias}</li>
             <li>UUID: {this.state.uuid}</li>
             <li>Created: {this.state.repo.Created}</li>
+            <li>Data Instances
+            <DataInstances instances={this.state.repo.DataInstances} />
+            </li>
           </ul>
         </div>
       </div>
@@ -41,3 +45,20 @@ var TileMap = React.createClass({
 });
 
 module.exports = TileMap;
+
+var DataInstances = React.createClass({
+  render: function() {
+    var instanceList = Object.keys(this.props.instances).map(function(data, i) {
+      return (
+        <li key={"instance-" + i}>{data}</li>
+      );
+    });
+
+    return (
+      <ul>
+      {instanceList}
+      </ul>
+    );
+  }
+});
+
