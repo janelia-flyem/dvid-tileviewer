@@ -43,6 +43,10 @@ var TileMapArea = React.createClass({
             'yz':  dx
           };
 
+          $('#stack-slider').attr('max', dz).val(0).change(function() {
+            $('#z-layer').val($(this).val());
+          });
+
           viewer = {
             nmPerPixel: 10,
             tileSource: {
@@ -66,13 +70,22 @@ var TileMapArea = React.createClass({
             wrapHorizontal:     false,
             maxZoomPixelRatio:  5.0,
             showNavigator:      true,
-            tileSources:        viewer.tileSource
+            tileSources:        viewer.tileSource,
+            //zoomPerClick:       1.0,
+            toolbar:            "toolbar",
+            zoomInButton:       "zoom-in",
+            zoomOutButton:      "zoom-out",
+            homeButton:         "home",
+            fullPageButton:     "full-page",
+            debugMode:          true
           });
           viewer.xy.scalebar({
             pixelsPerMeter: 1000000000/viewer.nmPerPixel,
             fontColor:      "yellow",
             color:          "yellow"
           });
+
+          window.viewer = viewer;
 
         });
     }
@@ -87,8 +100,19 @@ var TileMapArea = React.createClass({
 
   render: function() {
     if (this.props.instances.hasOwnProperty(dataname)) {
+
       return (
           <div>
+            <div id="toolbar">
+              <button type="button" className="btn btn-default" id="home">Home</button>
+              <button type="button" className="btn btn-default" id="zoom-in">Down Z Layer</button>
+              <button type="button" className="btn btn-default" id="zoom-out">Up Z Layer</button>
+              <button type="button" className="btn btn-default" id="full-page">Full Page</button>
+              <form>
+                <input id="stack-slider" min="0" max="1000" type="range" />
+                <input id="z-layer" type="text" value="0"/>
+              </form>
+            </div>
             <div id="viewer" className="openseadragon"></div>
           </div>
       );

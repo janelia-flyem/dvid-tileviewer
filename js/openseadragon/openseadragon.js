@@ -1,6 +1,6 @@
 //! OpenSeadragon 1.0.0
-//! Built on 2014-04-20
-//! Git commit: v1.0.0-149-g7ae0452-dirty
+//! Built on 2015-01-14
+//! Git commit: v1.0.0-154-gaa000eb-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -1028,7 +1028,7 @@ window.OpenSeadragon = window.OpenSeadragon || function( options ){
 
             //DEVELOPER SETTINGS
             debugMode:              false,
-            debugGridColor:         '#437AB2'
+            debugGridColor:         '#F4FA58'
         },
 
 
@@ -8672,6 +8672,10 @@ function doSlicing() {
             this.viewport.z = newSlice;
             THIS[ this.hash ].forceRedraw = true;
             THIS[ this.hash ].lastSliceTime = currentTime;
+            if (this.navigator && this.navigator.drawer.viewport) {
+              this.navigator.drawer.viewport.z = this.viewport.z;
+              THIS[ this.navigator.hash ].forceRedraw = true;
+            }
         }
 
         scheduleSlicing( this );
@@ -8683,6 +8687,10 @@ function doSingleSliceInc() {
         THIS[ this.hash ].slicing = false;
         THIS[ this.hash ].forceRedraw = true;
         this.viewport.z = Math.min(this.viewport.z + 1, this.source.maxZ);
+        if (this.navigator && this.navigator.drawer.viewport) {
+          this.navigator.drawer.viewport.z = this.viewport.z;
+          THIS[ this.navigator.hash ].forceRedraw = true;
+        }
     }
 }
 
@@ -8691,6 +8699,10 @@ function doSingleSliceDec() {
         THIS[ this.hash ].slicing = false;
         THIS[ this.hash ].forceRedraw = true;
         this.viewport.z = Math.max(this.viewport.z - 1, this.source.minZ);
+        if (this.navigator && this.navigator.drawer.viewport) {
+          this.navigator.drawer.viewport.z = this.viewport.z;
+          THIS[ this.navigator.hash ].forceRedraw = true;
+        }
     }
 }
 
@@ -15274,12 +15286,12 @@ function drawDebugInfo( drawer, tile, count, i ){
             drawer.context.fillText(
                 "Zoom: " + drawer.viewport.getZoom(),
                 tile.position.x,
-                tile.position.y - 30
+                tile.position.y - 35
             );
             drawer.context.fillText(
                 "Pan: " + drawer.viewport.getBounds().toString(),
                 tile.position.x,
-                tile.position.y - 20
+                tile.position.y - 25
             );
         }
         drawer.context.fillText(
@@ -15311,6 +15323,11 @@ function drawDebugInfo( drawer, tile, count, i ){
             "Position: " + tile.position.toString(),
             tile.position.x + 10,
             tile.position.y + 70
+        );
+        drawer.context.fillText(
+            "Z: " + drawer.viewport.z,
+            tile.position.x + 10,
+            tile.position.y + 80
         );
         drawer.context.restore();
     }
