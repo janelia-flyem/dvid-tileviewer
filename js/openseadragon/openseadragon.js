@@ -1,6 +1,6 @@
 //! OpenSeadragon 1.0.0
 //! Built on 2015-01-14
-//! Git commit: v1.0.0-154-gaa000eb-dirty
+//! Git commit: v1.0.0-155-g59f7210-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -6422,6 +6422,7 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
 
         // clear our reference to the main element - they will need to pass it in again, creating a new viewer
         this.element = null;
+        THIS = {};
     },
 
 
