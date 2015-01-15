@@ -51,6 +51,8 @@ var TileMapArea = React.createClass({
           $('#z-layer').val($(this).val());
         });
 
+        $('#z-layer').attr('max', dz);
+
         viewer = {
           nmPerPixel: 10,
           tileSource: {
@@ -68,6 +70,8 @@ var TileMapArea = React.createClass({
           }
         };
         viewer.xy = OpenSeadragon({
+          // need to be able to pass in the react state, so that we can modify it
+          // when using the other buttons to change z layer.
           id:                 "viewer",
           prefixUrl:          "/js/openseadragon/images/",
           navigatorSizeRatio: 0.25,
@@ -103,13 +107,18 @@ var TileMapArea = React.createClass({
   },
 
   componentDidUpdate: function() {
-    if (viewer.xy && viewer.xy.viewport) {
-      viewer.xy.viewport.z = this.state.layer;
-    }
+
   },
+
+  handleLayerChange: debounce(function() {
+    if (viewer.xy && viewer.xy.viewport) {
+      viewer.xy.updateLayer(this.state.layer);
+    }
+  }, 200),
 
   handleZChange: function(event) {
     this.setState({layer: event.target.value});
+    this.handleLayerChange();
   },
 
   render: function() {
@@ -117,12 +126,12 @@ var TileMapArea = React.createClass({
         <div>
           <div id="toolbar">
             <button type="button" className="btn btn-default" id="home">Home</button>
-            <button type="button" className="btn btn-default" id="zoom-in">Down Z Layer</button>
-            <button type="button" className="btn btn-default" id="zoom-out">Up Z Layer</button>
+            <button type="button" className="btn btn-default" id="zoom-in">Zoom In</button>
+            <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
             <button type="button" className="btn btn-default" id="full-page">Full Page</button>
             <form>
-              <input id="stack-slider" min="0" max="1000" type="range" value={this.state.layer} onChange={this.handleZChange}/>
-              <input id="z-layer" type="text" value={this.state.layer} onChange={this.handleZChange}/>
+              <input id="stack-slider" min="0" max="2000" type="range" value={this.state.layer} onChange={this.handleZChange}/>
+              <input id="z-layer" type="number" min="0" max="2000" value={this.state.layer} onChange={this.handleZChange}/>
             </form>
           </div>
           <div id="viewer" className="openseadragon"></div>
@@ -132,3 +141,18 @@ var TileMapArea = React.createClass({
 });
 
 module.exports = TileMapArea;
+
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+};

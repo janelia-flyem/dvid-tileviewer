@@ -1,5 +1,5 @@
 //! OpenSeadragon 1.0.0
-//! Built on 2015-01-14
+//! Built on 2015-01-15
 //! Git commit: v1.0.0-155-g59f7210-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
@@ -7180,18 +7180,18 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
         //////////////////////////////////////////////////////////////////////////
         // Navigation Controls
         //////////////////////////////////////////////////////////////////////////
-        /*
+        
         var beginZoomingInHandler   = $.delegate( this, beginZoomingIn ),
             endZoomingHandler       = $.delegate( this, endZooming ),
             doSingleZoomInHandler   = $.delegate( this, doSingleZoomIn ),
             beginZoomingOutHandler  = $.delegate( this, beginZoomingOut ),
             doSingleZoomOutHandler  = $.delegate( this, doSingleZoomOut ),
-        */
-        var beginSliceIncHandler    = $.delegate( this, beginSliceInc ),
+        
+        /*var beginSliceIncHandler    = $.delegate( this, beginSliceInc ),
             endSliceHandler         = $.delegate( this, endSlicing ),
             doSingleSliceIncHandler = $.delegate( this, doSingleSliceInc ),
             beginSliceDecHandler    = $.delegate( this, beginSliceDec ),
-            doSingleSliceDecHandler = $.delegate( this, doSingleSliceDec ),
+            doSingleSliceDecHandler = $.delegate( this, doSingleSliceDec ),*/
             onHomeHandler           = $.delegate( this, onHome ),
             onFullScreenHandler     = $.delegate( this, onFullScreen ),
             onRotateLeftHandler     = $.delegate( this, onRotateLeft ),
@@ -7223,19 +7223,19 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
                     srcGroup:   resolveUrl( this.prefixUrl, navImages.zoomIn.GROUP ),
                     srcHover:   resolveUrl( this.prefixUrl, navImages.zoomIn.HOVER ),
                     srcDown:    resolveUrl( this.prefixUrl, navImages.zoomIn.DOWN ),
-                    /*
+                    
                     onPress:    beginZoomingInHandler,
                     onRelease:  endZoomingHandler,
                     onClick:    doSingleZoomInHandler,
                     onEnter:    beginZoomingInHandler,
                     onExit:     endZoomingHandler,
-                    */
+                    /*
                     onPress:    beginSliceIncHandler, //beginZoomingInHandler,
                     onRelease:  endSliceHandler, //endZoomingHandler,
                     onClick:    doSingleSliceIncHandler, //doSingleZoomInHandler,
                     onEnter:    beginSliceIncHandler, //beginZoomingInHandler,
                     onExit:     endSliceHandler, //endZoomingHandler,
-                    
+                    */
                     onFocus:    onFocusHandler,
                     onBlur:     onBlurHandler
                 }));
@@ -7249,19 +7249,19 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
                     srcGroup:   resolveUrl( this.prefixUrl, navImages.zoomOut.GROUP ),
                     srcHover:   resolveUrl( this.prefixUrl, navImages.zoomOut.HOVER ),
                     srcDown:    resolveUrl( this.prefixUrl, navImages.zoomOut.DOWN ),
-                    /*
+                    
                     onPress:    beginZoomingOutHandler,
                     onRelease:  endZoomingHandler,
                     onClick:    doSingleZoomOutHandler,
                     onEnter:    beginZoomingOutHandler,
                     onExit:     endZoomingHandler,
-                    */
+                    /*
                     onPress:    beginSliceDecHandler, //beginZoomingOutHandler,
                     onRelease:  endSliceHandler, //endZoomingHandler,
                     onClick:    doSingleSliceDecHandler, //doSingleZoomOutHandler,
                     onEnter:    beginSliceDecHandler, //beginZoomingOutHandler,
                     onExit:     endSliceHandler, //endZoomingHandler,
-                    
+                    */
                     onFocus:    onFocusHandler,
                     onBlur:     onBlurHandler
                 }));
@@ -7356,7 +7356,33 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
         }
         return this;
     },
-    
+
+    updateLayer: function (layer) {
+      var self = this,
+        currentTime,
+        deltaTime,
+        newSlice,
+        incrSlice;
+
+      currentTime     = $.now();
+      deltaTime       = currentTime - THIS[ this.hash ].lastSliceTime;
+
+      $.console.log(deltaTime);
+
+      $.requestAnimationFrame(function() {
+        if ( self.viewport ) {
+          THIS[ self.hash ].slicing = false;
+          THIS[ self.hash ].forceRedraw = true;
+          self.viewport.z = Math.min(layer, self.source.maxZ);
+          self.viewport.z = Math.max(layer, self.source.minZ);
+            if (self.navigator && self.navigator.drawer.viewport) {
+              self.navigator.drawer.viewport.z = self.viewport.z;
+              THIS[ self.navigator.hash ].forceRedraw = true;
+            }
+        }
+      });
+    },
+
     /**
      * Gets the active page of a sequence
      * @function
@@ -8628,7 +8654,6 @@ function doSingleZoomOut() {
         this.viewport.applyConstraints();
     }
 }
-
 
 function beginSliceInc() {
     THIS[ this.hash ].lastSliceTime = $.now();
