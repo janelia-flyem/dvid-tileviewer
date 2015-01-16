@@ -1,6 +1,7 @@
 var React  = require('react'),
   Router   = require('react-router'),
   config   = require('../common/config'),
+  core     = require('../common/core'),
   dataname = 'graytiles',
   slice    = 'xy',
   viewer   = null;
@@ -85,7 +86,8 @@ var TileMapArea = React.createClass({
           zoomOutButton:      "zoom-out",
           homeButton:         "home",
           fullPageButton:     "full-page",
-          debugMode:          false
+          immediateRender:    true,
+          debugMode:          true
         });
         viewer.xy.scalebar({
           pixelsPerMeter: 1000000000/viewer.nmPerPixel,
@@ -110,15 +112,27 @@ var TileMapArea = React.createClass({
 
   },
 
-  handleLayerChange: debounce(function() {
+  handleLayerChange: function() {
     if (viewer.xy && viewer.xy.viewport) {
       viewer.xy.updateLayer(this.state.layer);
     }
-  }, 200),
+  },
 
-  handleZChange: function(event) {
+  handleZChange: core.throttle(function(event) {
     this.setState({layer: event.target.value});
     this.handleLayerChange();
+  }, 250),
+
+  handleZKeyDown: function (event) {
+    // event fired when the z input is focused and a key is pressed.
+  },
+
+  handleZKeyUp: function(event) {
+    // need to keep this here or the input number and the layer get out of sync
+    // when throttling.
+    if (viewer.xy && viewer.xy.viewport) {
+      viewer.xy.updateLayer(this.state.layer);
+    }
   },
 
   render: function() {
@@ -130,8 +144,8 @@ var TileMapArea = React.createClass({
             <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
             <button type="button" className="btn btn-default" id="full-page">Full Page</button>
             <form>
-              <input id="stack-slider" min="0" max="2000" type="range" value={this.state.layer} onChange={this.handleZChange}/>
-              <input id="z-layer" type="number" min="0" max="2000" value={this.state.layer} onChange={this.handleZChange}/>
+              <input id="stack-slider" min="0" max="2000" type="range" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
+              <input id="z-layer" type="number" min="0" max="2000" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
             </form>
           </div>
           <div id="viewer" className="openseadragon"></div>
@@ -142,17 +156,3 @@ var TileMapArea = React.createClass({
 
 module.exports = TileMapArea;
 
-function debounce(func, wait, immediate) {
-  var timeout;
-  return function() {
-    var context = this, args = arguments;
-    var later = function() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-    var callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-};
