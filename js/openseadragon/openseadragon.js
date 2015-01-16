@@ -1,6 +1,6 @@
 //! OpenSeadragon 1.0.0
 //! Built on 2015-01-15
-//! Git commit: v1.0.0-155-g59f7210-dirty
+//! Git commit: v1.0.0-156-g005f617
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -7366,8 +7366,6 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
 
       currentTime     = $.now();
       deltaTime       = currentTime - THIS[ this.hash ].lastSliceTime;
-
-      $.console.log(deltaTime);
 
       $.requestAnimationFrame(function() {
         if ( self.viewport ) {

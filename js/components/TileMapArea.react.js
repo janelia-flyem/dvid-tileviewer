@@ -85,7 +85,7 @@ var TileMapArea = React.createClass({
           zoomOutButton:      "zoom-out",
           homeButton:         "home",
           fullPageButton:     "full-page",
-          debugMode:          true
+          debugMode:          false
         });
         viewer.xy.scalebar({
           pixelsPerMeter: 1000000000/viewer.nmPerPixel,
