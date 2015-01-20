@@ -35,18 +35,21 @@ var TileMap = React.createClass({
             <h1>{this.state.repo.Alias}<span className="uuid">{this.state.uuid}</span></h1>
           </div>
           <div className="col-sm-6 text-right">
-            <p>Created: {dateString(this.state.repo.Created)}</p>
+            <p><b>Created:</b> {dateString(this.state.repo.Created)}</p>
+            <p><b>Updated:</b> {dateString(this.state.repo.Updated)}</p>
           </div>
         </div>
         <div className="row">
-          <div className="col-sm-2">
-            <ul>
-              <li>Data Instances
-              <DataInstances instances={this.state.repo.DataInstances} />
-              </li>
-            </ul>
+          <div className="col-sm-12">
+            <p>{this.state.repo.Description}</p>
           </div>
-          <div className="col-sm-10">
+        </div>
+        <div className="row">
+          <div className="col-sm-3">
+            <p>Data Instances</p>
+            <DataInstances instances={this.state.repo.DataInstances} />
+          </div>
+          <div className="col-sm-9">
             <TileMapArea instances={this.state.repo.DataInstances} uuid={this.state.uuid}/>
           </div>
         </div>
@@ -63,19 +66,32 @@ var dateString = function (unformatted) {
   return date.toString();
 }
 
-
 var DataInstances = React.createClass({
   render: function() {
-    var instanceList = Object.keys(this.props.instances).map(function(data, i) {
-      return (
-        <li key={"instance-" + i}>{data}</li>
-      );
-    });
+    var rows = [];
+
+    if (this.props && this.props.instances) {
+      var instances = this.props.instances;
+      for (var key in instances) {
+        if (instances.hasOwnProperty(key)) {
+          var instance = instances[key];
+          rows.push(<DataInstance key={key} name={instance.Base.Name} type={instance.Base.TypeName} versioned={instance.Base.Versioned}/>);
+        }
+      }
+    }
 
     return (
       <ul>
-      {instanceList}
+      {rows}
       </ul>
+    );
+  }
+});
+
+var DataInstance = React.createClass({
+  render: function () {
+    return (
+      <li>{this.props.name} <span className="label label-danger">{this.props.type}</span> <span className="label label-success">{this.props.versioned ? 'versioned' : 'unversioned'}</span></li>
     );
   }
 });
