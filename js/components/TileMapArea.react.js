@@ -139,14 +139,22 @@ var TileMapArea = React.createClass({
     return (
         <div>
           <div id="toolbar">
-            <button type="button" className="btn btn-default" id="home">Home</button>
-            <button type="button" className="btn btn-default" id="zoom-in">Zoom In</button>
-            <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
-            <button type="button" className="btn btn-default" id="full-page">Full Page</button>
-            <form>
-              <input id="stack-slider" min="0" max="2000" type="range" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
-              <input id="z-layer" type="number" min="0" max="2000" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
-            </form>
+            <div className="row">
+              <div className="col-sm-12">
+                <button type="button" className="btn btn-default" id="home">Home</button>
+                <button type="button" className="btn btn-default" id="zoom-in">Zoom In</button>
+                <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
+                <button type="button" className="btn btn-default" id="full-page">Full Page</button>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-sm-1" id="stack-input">
+                <input id="z-layer" type="number" min="0" max="2000" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
+              </div>
+              <div className="col-sm-11" id="stack-slider">
+                <input min="0" max="2000" type="range" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
+              </div>
+            </div>
           </div>
           <div id="viewer" className="openseadragon"></div>
         </div>

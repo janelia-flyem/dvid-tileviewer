@@ -3,3 +3,15 @@
   width:1000px;
   height:800px;
 }
+
+.btn {
+  margin: 0 0.3em 0.3em 0;
+}
+
+#stack-slider {
+  width: 950px;
+}
+
+#stack-input {
+  width: 80px;
+}
