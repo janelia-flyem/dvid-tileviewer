@@ -35,7 +35,7 @@ var TileMap = React.createClass({
           <ul>
             <li>Alias: {this.state.repo.Alias}</li>
             <li>UUID: {this.state.uuid}</li>
-            <li>Created: {this.state.repo.Created}</li>
+            <li>Created: {dateString(this.state.repo.Created)}</li>
             <li>Data Instances
             <DataInstances instances={this.state.repo.DataInstances} />
             </li>
@@ -51,6 +51,11 @@ var TileMap = React.createClass({
 
 module.exports = TileMap;
 
+
+var dateString = function (unformatted) {
+  var date = new Date(unformatted);
+  return date.toString();
+}
 
 
 var DataInstances = React.createClass({
