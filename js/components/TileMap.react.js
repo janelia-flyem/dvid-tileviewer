@@ -30,19 +30,25 @@ var TileMap = React.createClass({
   render: function () {
     return (
       <div>
-        <h1>Tile map</h1>
-        <div>
-          <ul>
-            <li>Alias: {this.state.repo.Alias}</li>
-            <li>UUID: {this.state.uuid}</li>
-            <li>Created: {dateString(this.state.repo.Created)}</li>
-            <li>Data Instances
-            <DataInstances instances={this.state.repo.DataInstances} />
-            </li>
-          </ul>
+        <div className="row">
+          <div className="col-sm-6">
+            <h1>{this.state.repo.Alias}<span className="uuid">{this.state.uuid}</span></h1>
+          </div>
+          <div className="col-sm-6 text-right">
+            <p>Created: {dateString(this.state.repo.Created)}</p>
+          </div>
         </div>
-        <div>
-          <TileMapArea instances={this.state.repo.DataInstances} uuid={this.state.uuid}/>
+        <div className="row">
+          <div className="col-sm-2">
+            <ul>
+              <li>Data Instances
+              <DataInstances instances={this.state.repo.DataInstances} />
+              </li>
+            </ul>
+          </div>
+          <div className="col-sm-10">
+            <TileMapArea instances={this.state.repo.DataInstances} uuid={this.state.uuid}/>
+          </div>
         </div>
       </div>
     );
