@@ -12,92 +12,94 @@ var TileMapArea = React.createClass({
     return {layer: 0};
   },
 
-  componentDidMount: function () {
-    var node = this.getDOMNode();
-    var uuid = this.props.uuid;
-    // set the variables for the tile viewer based on data fetched from the server
-    var url = config.baseUrl();
+  componentWillReceiveProps: function (props) {
+    if (props.instances && props.instances.graytiles) {
+      var node = this.getDOMNode();
+      var uuid = this.props.uuid;
+      // set the variables for the tile viewer based on data fetched from the server
+      var url = config.baseUrl();
 
-    $.when($.ajax(config.datatypeInfoUrl(uuid, dataname)), $.ajax(config.datatypeInfoUrl(uuid, 'grayscale')))
-      .done(function(tileRequest, grayscaleRequest) {
-        var tileData = tileRequest[0],
-          gScaleData = grayscaleRequest[0],
-          maxPoint   = gScaleData.Extended.MaxPoint,
-          minPoint   = gScaleData.Extended.MinPoint,
-          dx        = maxPoint[0] - minPoint[0],
-          dy        = maxPoint[1] - minPoint[1],
-          dz        = maxPoint[2] - minPoint[2];
+      $.when($.ajax(config.datatypeInfoUrl(uuid, dataname)), $.ajax(config.datatypeInfoUrl(uuid, 'grayscale')))
+        .done(function(tileRequest, grayscaleRequest) {
+          var tileData = tileRequest[0],
+            gScaleData = grayscaleRequest[0],
+            maxPoint   = gScaleData.Extended.MaxPoint,
+            minPoint   = gScaleData.Extended.MinPoint,
+            dx        = maxPoint[0] - minPoint[0],
+            dy        = maxPoint[1] - minPoint[1],
+            dz        = maxPoint[2] - minPoint[2];
 
-        var maxLevel = Object.keys(tileData.Extended.Levels).length - 1;
+          var maxLevel = Object.keys(tileData.Extended.Levels).length - 1;
 
-        var volumeWidth = {
-          'xy': dx,
-          'xz': dx,
-          'yz': dy,
-        };
+          var volumeWidth = {
+            'xy': dx,
+            'xz': dx,
+            'yz': dy,
+          };
 
-        var volumeHeight = {
-          'xy':  dy,
-          'xz':  dz,
-          'yz':  dz
-        };
+          var volumeHeight = {
+            'xy':  dy,
+            'xz':  dz,
+            'yz':  dz
+          };
 
-        var volumeDepth = {
-          'xy':  dz,
-          'xz':  dy,
-          'yz':  dx
-        };
+          var volumeDepth = {
+            'xy':  dz,
+            'xz':  dy,
+            'yz':  dx
+          };
 
-        $('#stack-slider').attr('max', dz).change(function() {
-          $('#z-layer').val($(this).val());
-        });
+          $('#stack-slider').attr('max', dz).change(function() {
+            $('#z-layer').val($(this).val());
+          });
 
-        $('#z-layer').attr('max', dz);
+          $('#z-layer').attr('max', dz);
 
-        viewer = {
-          nmPerPixel: 10,
-          tileSource: {
-            height:    volumeHeight[slice],
-            width:     volumeWidth[slice],
-            tileSize:  tileData.Extended.Levels[0].TileSize[0],
-            minLevel:  0,
-            maxLevel:  maxLevel,
-            minZ:      0,
-            maxZ:      volumeDepth[slice]-1,
-            // getTileAtPoint: function(level, point) { Add offset to compute tiles }
-            getTileUrl: function xyTileURL(level, x, y, z) {
-              return url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+          viewer = {
+            nmPerPixel: 10,
+            tileSource: {
+              height:    volumeHeight[slice],
+              width:     volumeWidth[slice],
+              tileSize:  tileData.Extended.Levels[0].TileSize[0],
+              minLevel:  0,
+              maxLevel:  maxLevel,
+              minZ:      0,
+              maxZ:      volumeDepth[slice]-1,
+              // getTileAtPoint: function(level, point) { Add offset to compute tiles }
+              getTileUrl: function xyTileURL(level, x, y, z) {
+                return url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+              }
             }
-          }
-        };
-        viewer.xy = OpenSeadragon({
-          // need to be able to pass in the react state, so that we can modify it
-          // when using the other buttons to change z layer.
-          id:                 "viewer",
-          prefixUrl:          "/js/openseadragon/images/",
-          navigatorSizeRatio: 0.25,
-          wrapHorizontal:     false,
-          maxZoomPixelRatio:  5.0,
-          showNavigator:      true,
-          tileSources:        viewer.tileSource,
-          //zoomPerClick:       1.0,
-          toolbar:            "toolbar",
-          zoomInButton:       "zoom-in",
-          zoomOutButton:      "zoom-out",
-          homeButton:         "home",
-          fullPageButton:     "full-page",
-          immediateRender:    true,
-          debugMode:          true
-        });
-        viewer.xy.scalebar({
-          pixelsPerMeter: 1000000000/viewer.nmPerPixel,
-          fontColor:      "yellow",
-          color:          "yellow"
-        });
+          };
+          viewer.xy = OpenSeadragon({
+            // need to be able to pass in the react state, so that we can modify it
+            // when using the other buttons to change z layer.
+            id:                 "viewer",
+            prefixUrl:          "/js/openseadragon/images/",
+            navigatorSizeRatio: 0.25,
+            wrapHorizontal:     false,
+            maxZoomPixelRatio:  5.0,
+            showNavigator:      true,
+            tileSources:        viewer.tileSource,
+            //zoomPerClick:       1.0,
+            toolbar:            "toolbar",
+            zoomInButton:       "zoom-in",
+            zoomOutButton:      "zoom-out",
+            homeButton:         "home",
+            fullPageButton:     "full-page",
+            immediateRender:    true,
+            debugMode:          false
+          });
+          viewer.xy.scalebar({
+            pixelsPerMeter: 1000000000/viewer.nmPerPixel,
+            fontColor:      "yellow",
+            color:          "yellow"
+          });
 
-        window.viewer = viewer;
+          window.viewer = viewer;
 
-      });
+        });
+    }
   },
 
   componentWillUnmount: function() {
@@ -136,6 +138,11 @@ var TileMapArea = React.createClass({
   },
 
   render: function() {
+
+    if (!this.props.instances || !this.props.instances.graytiles ) {
+      return (<p>Tile data not available</p>);
+    }
+
     return (
         <div>
           <div id="toolbar">
