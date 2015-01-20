@@ -112,15 +112,17 @@ var TileMapArea = React.createClass({
 
   },
 
-  handleLayerChange: function() {
+  handleLayerChange: function(layer) {
     if (viewer.xy && viewer.xy.viewport) {
-      viewer.xy.updateLayer(this.state.layer);
+      viewer.xy.updateLayer(layer);
     }
   },
 
   handleZChange: core.throttle(function(event) {
-    this.setState({layer: event.target.value});
-    this.handleLayerChange();
+    if (event.target) {
+      this.setState({layer: event.target.value});
+      this.handleLayerChange(event.target.value);
+    }
   }, 250),
 
   handleZKeyDown: function (event) {
@@ -130,9 +132,7 @@ var TileMapArea = React.createClass({
   handleZKeyUp: function(event) {
     // need to keep this here or the input number and the layer get out of sync
     // when throttling.
-    if (viewer.xy && viewer.xy.viewport) {
-      viewer.xy.updateLayer(this.state.layer);
-    }
+    this.handleLayerChange(event.target.value);
   },
 
   render: function() {

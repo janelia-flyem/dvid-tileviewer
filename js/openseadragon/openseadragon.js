@@ -1,5 +1,5 @@
 //! OpenSeadragon 1.0.0
-//! Built on 2015-01-16
+//! Built on 2015-01-20
 //! Git commit: v1.0.0-156-g005f617-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
@@ -7371,7 +7371,6 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
         if ( self.viewport ) {
           THIS[ self.hash ].slicing = false;
           THIS[ self.hash ].forceRedraw = true;
-          $.console.log('forceRedraw for slice: ' + self.viewport.z);
           self.viewport.z = Math.min(layer, self.source.maxZ);
           self.viewport.z = Math.max(layer, self.source.minZ);
             if (self.navigator && self.navigator.drawer.viewport) {
@@ -14357,7 +14356,6 @@ $.Drawer.prototype = /** @lends OpenSeadragon.Drawer.prototype */{
      */
     update: function() {
         //this.profiler.beginUpdate();
-        $.console.log('update called');
         this.midUpdate = true;
         updateViewport( this );
         this.midUpdate = false;
