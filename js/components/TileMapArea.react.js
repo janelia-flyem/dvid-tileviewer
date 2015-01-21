@@ -140,7 +140,12 @@ var TileMapArea = React.createClass({
   render: function() {
 
     if (!this.props.instances || !this.props.instances.graytiles ) {
-      return (<div className="data-missing">Tile data not available</div>);
+      return (
+        <div className="data-missing">
+          <h3>Tile data not available</h3>
+          <p className="subtle">Help on how to generate tile data can be found <a href="">here</a>.</p>
+        </div>
+      );
     }
 
     return (

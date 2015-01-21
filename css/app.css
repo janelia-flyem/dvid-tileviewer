@@ -5,9 +5,13 @@
 }
 
 .data-missing {
-  padding-top:400px;
+  padding-top:45%;
   text-align:center;
   color:#fff;
+}
+
+.data-missing .subtle {
+  color:#999;
 }
 
 .btn {
