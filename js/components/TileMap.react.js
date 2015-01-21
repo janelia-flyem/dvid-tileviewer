@@ -32,16 +32,13 @@ var TileMap = React.createClass({
       <div>
         <div className="row">
           <div className="col-sm-6">
-            <h1>{this.state.repo.Alias}<span className="uuid">{this.state.uuid}</span></h1>
+            <h1>{this.state.repo.Alias}</h1>
+            <p>{this.state.repo.Description}</p>
           </div>
           <div className="col-sm-6 text-right">
+            <p><b>UUID:</b> {this.state.uuid}</p>
             <p><b>Created:</b> {dateString(this.state.repo.Created)}</p>
             <p><b>Updated:</b> {dateString(this.state.repo.Updated)}</p>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-sm-12">
-            <p>{this.state.repo.Description}</p>
           </div>
         </div>
         <div className="row">
