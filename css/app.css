@@ -11,7 +11,7 @@
   color:#fff;
 }
 
-.data-missing .subtle {
+.subtle {
   color:#999;
 }
 
@@ -31,6 +31,11 @@
   margin-left: 1em;
   color:#777;
   font-size:0.5em;
+}
+
+.info-header {
+  border-bottom: #e7e7e7 solid 1px;
+  margin-bottom: 1em;
 }
 
 h1 {

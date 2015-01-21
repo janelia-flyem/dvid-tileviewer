@@ -9,7 +9,7 @@ var Navigation = React.createClass({
 <nav className="navbar navbar-default">
   <div className="container-fluid">
     <div className="navbar-header">
-      <Link to="tileviewerapp" className="navbar-brand">DVID Tile Viewer</Link>
+      <Link to="tileviewerapp" className="navbar-brand">DVID</Link>
     </div>
   </div>
 </nav>

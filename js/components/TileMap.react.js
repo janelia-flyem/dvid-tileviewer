@@ -30,7 +30,7 @@ var TileMap = React.createClass({
   render: function () {
     return (
       <div>
-        <div className="row">
+        <div className="row info-header">
           <div className="col-sm-6">
             <h1>{this.state.repo.Alias}</h1>
             <p>{this.state.repo.Description}</p>

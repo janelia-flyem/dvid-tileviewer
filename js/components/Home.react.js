@@ -7,7 +7,7 @@ var Home = React.createClass({
   getInitialState: function() {
     return {
       uuids: [],
-      text: 'UUID list'
+      text: 'Repositories'
     };
   },
 
@@ -19,7 +19,7 @@ var Home = React.createClass({
         var repolist = [];
         for (var repo in repos) {
           if (repos.hasOwnProperty(repo)) {
-            repolist.push({key: repo, uuid: repo, alias: repos[repo].Alias});
+            repolist.push({key: repo, uuid: repo, alias: repos[repo].Alias, desc: repos[repo].Description});
           }
         }
         this.setState({
@@ -32,8 +32,7 @@ var Home = React.createClass({
   render: function () {
     return (
       <div>
-        <h1>Home</h1>
-        <p>{this.state.text}</p>
+        <h1>{this.state.text}</h1>
         <UUIDList items={this.state.uuids}/>
       </div>
     );
@@ -43,7 +42,7 @@ var Home = React.createClass({
 var ItemWrapper = React.createClass({
   render: function() {
     return (
-      <li><Link to="tilemap" params={{uuid: this.props.data.uuid}}>{this.props.data.alias}</Link> - {this.props.data.uuid} </li>
+      <li><Link to="tilemap" params={{uuid: this.props.data.uuid}}>{this.props.data.alias}</Link> - {this.props.data.desc}<p className="subtle">{this.props.data.uuid}</p></li>
     );
   }
 });
