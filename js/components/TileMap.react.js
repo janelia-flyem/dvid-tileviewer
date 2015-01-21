@@ -45,11 +45,11 @@ var TileMap = React.createClass({
           </div>
         </div>
         <div className="row">
-          <div className="col-sm-3">
+          <div className="col-sm-4">
             <p>Data Instances</p>
             <DataInstances instances={this.state.repo.DataInstances} />
           </div>
-          <div className="col-sm-9">
+          <div className="col-sm-8">
             <TileMapArea instances={this.state.repo.DataInstances} uuid={this.state.uuid}/>
           </div>
         </div>

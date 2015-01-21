@@ -1,7 +1,13 @@
-.openseadragon {
+.openseadragon, .data-missing {
   background: #000;
   width:800px;
   height:800px;
+}
+
+.data-missing {
+  padding-top:400px;
+  text-align:center;
+  color:#fff;
 }
 
 .btn {
