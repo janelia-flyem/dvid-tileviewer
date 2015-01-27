@@ -5,10 +5,15 @@
   "main": "js/app.js",
   "devDependencies": {
     "reactify": "^0.17.1",
+    "react-tools": "^0.12.2",
     "browserify": "^7.0.3",
     "webify": "^1.0.0",
     "watchify": "^2.2.1",
-    "envify": "^3.2.0"
+    "envify": "^3.2.0",
+    "grunt": "^0.4.5",
+    "grunt-react": "^0.10.0",
+    "grunt-contrib-uglify": "^0.7.0",
+    "grunt-browserify": "^3.3.0"
   },
   "scripts": {
     "start": "watchify -o js/bundle.js -v -d ."
