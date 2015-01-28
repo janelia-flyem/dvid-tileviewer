@@ -52,10 +52,10 @@ var TileMapArea = React.createClass({
           };
 
           $('#stack-slider').attr('max', dz).change(function() {
-            $('#z-layer').val($(this).val());
+            $('#depth').val($(this).val());
           });
 
-          $('#z-layer').attr('max', dz);
+          $('#depth').attr('max', dz);
 
           viewer = {
             nmPerPixel: 10,
@@ -70,8 +70,7 @@ var TileMapArea = React.createClass({
               maxZ:      volumeDepth[slice1]-1,
               // getTileAtPoint: function(level, point) { Add offset to compute tiles }
               getTileUrl: function xyTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice1 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
-                console.log(api_url);
+                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
                 return api_url;
               }
             },
@@ -83,9 +82,8 @@ var TileMapArea = React.createClass({
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice2]-1,
-              getTileUrl: function xyTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice2 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
-                console.log(api_url);
+              getTileUrl: function xzTileURL(level, x, y, z) {
+                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
                 return api_url;
               }
             },
@@ -97,9 +95,8 @@ var TileMapArea = React.createClass({
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice3]-1,
-              getTileUrl: function xyTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice3 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
-                console.log(api_url);
+              getTileUrl: function yzTileURL(level, x, y, z) {
+                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
                 return api_url;
               }
             }
@@ -124,7 +121,7 @@ var TileMapArea = React.createClass({
             nextButton:         "next",
             fullPageButton:     "full-page",
             immediateRender:    true,
-            debugMode:          false
+            debugMode:          true
           });
           viewer.xy.scalebar({
             pixelsPerMeter: 1000000000/viewer.nmPerPixel,
@@ -174,8 +171,11 @@ var TileMapArea = React.createClass({
   },
 
   handlePlaneChange: function(event) {
-    console.log(event.target.value);
-    console.log(viewer.xy.tileSources);
+    // update the tile viewer display.
+    viewer.xy.goToPage(event.target.value);
+    // update the slider to reflect the new depth.
+    $('#depth').attr('max', 1000);
+    $('#stack-slider').attr('max', 1000);
   },
 
   render: function() {
@@ -200,16 +200,16 @@ var TileMapArea = React.createClass({
                 <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
                 <button type="button" className="btn btn-default" id="full-page">Full Screen</button>
                 <select className="form-control cut_plane" onChange={this.handlePlaneChange}>
-                  <option>xy</option>
-                  <option>xz</option>
-                  <option>yz</option>
+                  <option value="0">xy</option>
+                  <option value="1">xz</option>
+                  <option value="2">yz</option>
                 </select>
               </div>
             </form>
             </div>
             <div className="row">
               <div className="col-sm-1" id="stack-input">
-                <input id="z-layer" type="number" min="0" max="2000" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
+                <input id="depth" type="number" min="0" max="2000" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
               </div>
               <div className="col-sm-11" id="slider-container">
                 <input id="stack-slider" min="0" max="2000" type="range" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
