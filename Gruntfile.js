@@ -8,8 +8,8 @@ module.exports = function(grunt) {
         transform:  [ require('grunt-react').browserify ]
       },
       app:          {
-        src:        'js/app.js',
-        dest:       'js/bundle.js'
+        src:        'js/src/app.js',
+        dest:       'js/build/bundle.js'
       }
     },
     uglify: {
@@ -17,13 +17,13 @@ module.exports = function(grunt) {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
       build: {
-        src: 'js/bundle.js',
-        dest: 'js/bundle.min.js'
+        src: 'js/build/bundle.js',
+        dest: 'js/build/bundle.min.js'
       }
     },
     watch: {
       scripts: {
-        files: ['js/**/*.js'],
+        files: ['js/src/**/*.js'],
         tasks: ['browserify', 'uglify']
       }
     }

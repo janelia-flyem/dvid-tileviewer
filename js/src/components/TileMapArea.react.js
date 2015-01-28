@@ -3,7 +3,9 @@ var React  = require('react'),
   config   = require('../common/config'),
   core     = require('../common/core'),
   dataname = 'graytiles',
-  slice    = 'xy',
+  slice1    = 'xy',
+  slice2    = 'xz',
+  slice3    = 'yz',
   viewer   = null;
 
 var TileMapArea = React.createClass({
@@ -57,19 +59,51 @@ var TileMapArea = React.createClass({
 
           viewer = {
             nmPerPixel: 10,
-            tileSource: {
-              height:    volumeHeight[slice],
-              width:     volumeWidth[slice],
+            tileSources: [
+            {
+              height:    volumeHeight[slice1],
+              width:     volumeWidth[slice1],
               tileSize:  tileData.Extended.Levels[0].TileSize[0],
               minLevel:  0,
               maxLevel:  maxLevel,
               minZ:      0,
-              maxZ:      volumeDepth[slice]-1,
+              maxZ:      volumeDepth[slice1]-1,
               // getTileAtPoint: function(level, point) { Add offset to compute tiles }
               getTileUrl: function xyTileURL(level, x, y, z) {
-                return url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice1 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+                console.log(api_url);
+                return api_url;
+              }
+            },
+            {
+              height:    volumeHeight[slice2],
+              width:     volumeWidth[slice2],
+              tileSize:  tileData.Extended.Levels[0].TileSize[0],
+              minLevel:  0,
+              maxLevel:  maxLevel,
+              minZ:      0,
+              maxZ:      volumeDepth[slice2]-1,
+              getTileUrl: function xyTileURL(level, x, y, z) {
+                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice2 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+                console.log(api_url);
+                return api_url;
+              }
+            },
+            {
+              height:    volumeHeight[slice3],
+              width:     volumeWidth[slice3],
+              tileSize:  tileData.Extended.Levels[0].TileSize[0],
+              minLevel:  0,
+              maxLevel:  maxLevel,
+              minZ:      0,
+              maxZ:      volumeDepth[slice3]-1,
+              getTileUrl: function xyTileURL(level, x, y, z) {
+                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice3 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+                console.log(api_url);
+                return api_url;
               }
             }
+            ]
           };
           viewer.xy = OpenSeadragon({
             // need to be able to pass in the react state, so that we can modify it
@@ -80,12 +114,14 @@ var TileMapArea = React.createClass({
             wrapHorizontal:     false,
             maxZoomPixelRatio:  5.0,
             showNavigator:      true,
-            tileSources:        viewer.tileSource,
+            tileSources:        viewer.tileSources,
             //zoomPerClick:       1.0,
             toolbar:            "toolbar",
             zoomInButton:       "zoom-in",
             zoomOutButton:      "zoom-out",
             homeButton:         "home",
+            previousButton:     "previous",
+            nextButton:         "next",
             fullPageButton:     "full-page",
             immediateRender:    true,
             debugMode:          false
@@ -137,6 +173,11 @@ var TileMapArea = React.createClass({
     this.handleLayerChange(event.target.value);
   },
 
+  handlePlaneChange: function(event) {
+    console.log(event.target.value);
+    console.log(viewer.xy.tileSources);
+  },
+
   render: function() {
 
     if (!this.props.instances || !this.props.instances.graytiles ) {
@@ -152,12 +193,19 @@ var TileMapArea = React.createClass({
         <div>
           <div id="toolbar">
             <div className="row">
+            <form className="form-inline">
               <div className="col-sm-12">
                 <button type="button" className="btn btn-default" id="home">Home</button>
                 <button type="button" className="btn btn-default" id="zoom-in">Zoom In</button>
                 <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
                 <button type="button" className="btn btn-default" id="full-page">Full Screen</button>
+                <select className="form-control cut_plane" onChange={this.handlePlaneChange}>
+                  <option>xy</option>
+                  <option>xz</option>
+                  <option>yz</option>
+                </select>
               </div>
+            </form>
             </div>
             <div className="row">
               <div className="col-sm-1" id="stack-input">
