@@ -68,7 +68,6 @@ var TileMapArea = React.createClass({
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice1]-1,
-              // getTileAtPoint: function(level, point) { Add offset to compute tiles }
               getTileUrl: function xyTileURL(level, x, y, z) {
                 var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
                 return api_url;
@@ -83,7 +82,7 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice2]-1,
               getTileUrl: function xzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
+                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
                 return api_url;
               }
             },
@@ -96,7 +95,7 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
+                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice3 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
                 return api_url;
               }
             }
