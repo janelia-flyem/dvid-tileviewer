@@ -44,7 +44,7 @@ var TileMap = React.createClass({
         <div className="row">
           <div className="col-sm-4">
             <p>Data Instances</p>
-            <DataInstances instances={this.state.repo.DataInstances} />
+            <DataInstances instances={this.state.repo.DataInstances} uuid={this.state.uuid}/>
           </div>
           <div className="col-sm-8">
             <TileMapArea instances={this.state.repo.DataInstances} uuid={this.state.uuid}/>
@@ -72,7 +72,7 @@ var DataInstances = React.createClass({
       for (var key in instances) {
         if (instances.hasOwnProperty(key)) {
           var instance = instances[key];
-          rows.push(<DataInstance key={key} name={instance.Base.Name} type={instance.Base.TypeName} versioned={instance.Base.Versioned}/>);
+          rows.push(<DataInstance key={key} uuid={this.props.uuid} name={instance.Base.Name} type={instance.Base.TypeName} versioned={instance.Base.Versioned}/>);
         }
       }
     }
@@ -87,8 +87,9 @@ var DataInstances = React.createClass({
 
 var DataInstance = React.createClass({
   render: function () {
+    var url = config.datatypeInfoUrl(this.props.uuid, this.props.name);
     return (
-      <li>{this.props.name} <span className="label label-danger">{this.props.type}</span> <span className="label label-success">{this.props.versioned ? 'versioned' : 'unversioned'}</span></li>
+      <li><a href={url}>{this.props.name}</a> <span className="label label-danger">{this.props.type}</span> <span className="label label-success">{this.props.versioned ? 'versioned' : 'unversioned'}</span></li>
     );
   }
 });
