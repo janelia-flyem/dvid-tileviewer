@@ -1,6 +1,6 @@
 //! OpenSeadragon 1.0.0
-//! Built on 2015-01-20
-//! Git commit: v1.0.0-156-g005f617-dirty
+//! Built on 2015-01-30
+//! Git commit: v1.0.0-157-gc150d9a-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -14476,7 +14476,7 @@ function updateViewport( drawer ) {
         //TODO: Should be tuned depending on speed of tile access and size of viewport.
         //This value seems to work well on a MacBookPro 2013 with SSD.  It's possible
         //that the tile caching is being done inefficiently across the Z.
-        ZRadius         = 2,
+        ZRadius         = 1,
         best            = null,
         haveDrawn       = false,
         currentTime     = $.now(),

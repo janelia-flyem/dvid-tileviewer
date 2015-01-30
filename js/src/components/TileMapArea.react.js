@@ -69,6 +69,9 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice1]-1,
               getTileUrl: function xyTileURL(level, x, y, z) {
+                if (level < 4) {
+                  return;
+                }
                 var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
                 return api_url;
               }
@@ -82,7 +85,10 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice2]-1,
               getTileUrl: function xzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
+                if (level < 4) {
+                  return;
+                }
+                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
                 return api_url;
               }
             },
@@ -95,7 +101,10 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice3 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
+                if (level < 4) {
+                  return;
+                }
+                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
                 return api_url;
               }
             }
@@ -119,7 +128,7 @@ var TileMapArea = React.createClass({
             previousButton:     "previous",
             nextButton:         "next",
             fullPageButton:     "full-page",
-            immediateRender:    true,
+            //immediateRender:    true,
             debugMode:          true
           });
           viewer.xy.scalebar({
@@ -173,8 +182,8 @@ var TileMapArea = React.createClass({
     // update the tile viewer display.
     viewer.xy.goToPage(event.target.value);
     // update the slider to reflect the new depth.
-    $('#depth').attr('max', 1000);
-    $('#stack-slider').attr('max', 1000);
+    $('#depth').attr('max', 6000);
+    $('#stack-slider').attr('max', 6000);
   },
 
   render: function() {
