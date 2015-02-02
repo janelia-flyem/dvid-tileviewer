@@ -127,6 +127,7 @@ var TileMapArea = React.createClass({
             homeButton:         "home",
             previousButton:     "previous",
             nextButton:         "next",
+            preserveViewport:   true,
             fullPageButton:     "full-page",
             //immediateRender:    true,
             debugMode:          true
@@ -179,11 +180,17 @@ var TileMapArea = React.createClass({
   },
 
   handlePlaneChange: function(event) {
+    var choice = event.target.value;
     // update the tile viewer display.
-    viewer.xy.goToPage(event.target.value);
-    // update the slider to reflect the new depth.
-    $('#depth').attr('max', 6000);
-    $('#stack-slider').attr('max', 6000);
+    viewer.xy.goToPage(choice);
+    // update the slider to reflect the new depth, which can be found in the viewer
+    // object.
+    var depth = viewer.tileSources[choice].maxZ;
+    $('#depth').attr('max', depth);
+    $('#stack-slider').attr('max', depth);
+    // need to figure out which coordinate we are moving to and set the slider accordingly.
+    this.setState({layer: 0});
+    // need to move the image to the correct coordinates how to do this via openseqdragon?
   },
 
   render: function() {
