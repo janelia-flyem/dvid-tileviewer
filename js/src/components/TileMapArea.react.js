@@ -2,16 +2,17 @@ var React  = require('react'),
   Router   = require('react-router'),
   config   = require('../common/config'),
   core     = require('../common/core'),
-  dataname = 'graytiles',
+  dataname = config.settings.datatype,
   slice1    = 'xy',
   slice2    = 'xz',
   slice3    = 'yz',
   viewer   = null;
+  img_helper = null;
 
 var TileMapArea = React.createClass({
 
   getInitialState: function() {
-    return {layer: 0};
+    return {coordinates: { x: 0, y: 0, z: 0}, layer: 0, plane: 0};
   },
 
   componentWillReceiveProps: function (props) {
@@ -31,7 +32,11 @@ var TileMapArea = React.createClass({
             dy        = maxPoint[1] - minPoint[1],
             dz        = maxPoint[2] - minPoint[2];
 
-          var maxLevel = Object.keys(tileData.Extended.Levels).length - 1;
+          // set a default level of one unless we actually have tiling information
+          var maxLevel = 4;
+          if (tileData.Extended && tileData.Extended.Levels) {
+            maxLevel = Object.keys(tileData.Extended.Levels).length - 1;
+          }
 
           var volumeWidth = {
             'xy': dx,
@@ -57,54 +62,50 @@ var TileMapArea = React.createClass({
 
           $('#depth').attr('max', dz);
 
+          var tileSize = 512;
+          if (tileData.Extended && tileData.Extended.Levels) {
+            tileSize = tileData.Extended.Levels[0].TileSize[0];
+          }
+
           viewer = {
             nmPerPixel: 10,
             tileSources: [
             {
               height:    volumeHeight[slice1],
               width:     volumeWidth[slice1],
-              tileSize:  tileData.Extended.Levels[0].TileSize[0],
+              tileSize:  tileSize,
               minLevel:  0,
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice1]-1,
               getTileUrl: function xyTileURL(level, x, y, z) {
-                if (level < 4) {
-                  return;
-                }
-                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
+                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
                 return api_url;
               }
             },
             {
               height:    volumeHeight[slice2],
               width:     volumeWidth[slice2],
-              tileSize:  tileData.Extended.Levels[0].TileSize[0],
+              tileSize:  tileSize,
               minLevel:  0,
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice2]-1,
               getTileUrl: function xzTileURL(level, x, y, z) {
-                if (level < 4) {
-                  return;
-                }
-                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
+                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
                 return api_url;
               }
             },
             {
               height:    volumeHeight[slice3],
               width:     volumeWidth[slice3],
-              tileSize:  tileData.Extended.Levels[0].TileSize[0],
+              tileSize:  tileSize,
               minLevel:  0,
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
-                if (level < 4) {
-                  return;
-                }
-                var api_url = url + "/api/node/" + uuid + "/grayscale/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
+                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
                 return api_url;
               }
             }
@@ -139,6 +140,8 @@ var TileMapArea = React.createClass({
           });
 
           window.viewer = viewer;
+          img_helper = viewer.xy.activateImagingHelper({viewChangedHandler: onImageViewChanged });
+          window.img_helper = img_helper;
 
         });
     }
@@ -179,8 +182,39 @@ var TileMapArea = React.createClass({
     this.handleLayerChange(event.target.value);
   },
 
+  handleCoordinateChange: function(event) {
+    event.preventDefault();
+
+    console.log([this.refs.horizontal.getDOMNode().value.trim(), this.refs.vertical.getDOMNode().value.trim()]);
+
+    var x = parseInt(this.refs.horizontal.getDOMNode().value.trim(), 10);
+    var y = parseInt(this.refs.vertical.getDOMNode().value.trim(), 10);
+    var z = parseInt(this.refs.depth.getDOMNode().value.trim(), 10);
+
+    var point = new OpenSeadragon.Point(x,y);
+    var logical = img_helper.dataToLogicalPoint(point);
+    console.log([point, logical]);
+
+    //scroll to the point in the plane
+    img_helper.centerAboutLogicalPoint(logical);
+
+    // change the layer
+    this.setState({layer: z});
+    this.handleLayerChange(z);
+
+  },
+
   handlePlaneChange: function(event) {
-    var choice = event.target.value;
+    // convert the value to an integer for later lookups
+    var choice = parseInt(event.target.value, 10);
+
+    // get required values before the change
+    var zoomFactor  = img_helper.getZoomFactor();
+    console.info(zoomFactor);
+    // need to figure out which coordinate we are moving to and set the slider accordingly.
+    var coordinates = img_helper.logicalToDataPoint(img_helper._viewportCenter);
+    coordinates.z = Math.round($('#depth').val());
+
     // update the tile viewer display.
     viewer.xy.goToPage(choice);
     // update the slider to reflect the new depth, which can be found in the viewer
@@ -188,14 +222,23 @@ var TileMapArea = React.createClass({
     var depth = viewer.tileSources[choice].maxZ;
     $('#depth').attr('max', depth);
     $('#stack-slider').attr('max', depth);
-    // need to figure out which coordinate we are moving to and set the slider accordingly.
-    this.setState({layer: 0});
+
+    viewer.xy.addHandler('page', function() {
+      console.info('page changed');
+    });
+
+    // coordinate conversion method here
+    var converted = convertCoordinates({coordinates: coordinates, from: this.state.plane, to: choice});
+    this.setState({layer: Math.round(converted.z)});
+    this.setState({plane: choice});
     // need to move the image to the correct coordinates how to do this via openseqdragon?
+    img_helper.centerAboutLogicalPoint(img_helper.dataToLogicalPoint(converted), true);
+    img_helper.setZoomFactor(zoomFactor, true);
   },
 
   render: function() {
 
-    if (!this.props.instances || !this.props.instances.graytiles ) {
+    if (!this.props.instances || !this.props.instances.hasOwnProperty(dataname) ) {
       return (
         <div className="data-missing">
           <h3>Tile data not available</h3>
@@ -214,7 +257,7 @@ var TileMapArea = React.createClass({
                 <button type="button" className="btn btn-default" id="zoom-in">Zoom In</button>
                 <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
                 <button type="button" className="btn btn-default" id="full-page">Full Screen</button>
-                <select className="form-control cut_plane" onChange={this.handlePlaneChange}>
+                <select value={this.state.plane} className="form-control cut_plane" onChange={this.handlePlaneChange}>
                   <option value="0">xy</option>
                   <option value="1">xz</option>
                   <option value="2">yz</option>
@@ -232,10 +275,98 @@ var TileMapArea = React.createClass({
             </div>
           </div>
           <div id="viewer" className="openseadragon"></div>
+          <div className="row">
+            <div className="col-sm-12">
+              <form name="coordinates" onSubmit={this.handleCoordinateChange}>
+                w<input id="horizontal" type="number" min="0" max="9999" ref="horizontal" />
+                h<input id="vertical" type="number" min="0" max="9999" ref="vertical" />
+                d<input id="depth" type="number" min="0" max="9999" ref="depth" />
+                <button type="submit" id="coordinatechange">Go</button>
+              </form>
+            </div>
+          </div>
         </div>
     );
   }
 });
 
 module.exports = TileMapArea;
+
+function onImageViewChanged(event) {
+  console.info(event);
+};
+
+function convertCoordinates (input) {
+  console.info(input.coordinates);
+  var converted = null;
+  switch (input.from) {
+    case 0:// xy
+      converted = convertFromXY(input.coordinates, input.to);
+      break;
+    case 1:// xz
+      converted = convertFromXZ(input.coordinates, input.to);
+      break;
+    case 2:// yz
+      converted = convertFromYZ(input.coordinates, input.to);
+      break;
+    default://
+      converted = input.coordinates;
+  }
+
+  console.info(converted);
+  return converted;
+};
+
+function convertFromXY(coordinates, to) {
+  console.info('converting from xy');
+  var converted = null;
+  switch (to) {
+    case 1:// xz
+      converted = new OpenSeadragon.Point(coordinates.x, coordinates.z);
+      converted.z = coordinates.y;
+      break;
+    case 2:// yz
+      converted = new OpenSeadragon.Point(coordinates.y, coordinates.z);
+      converted.z = coordinates.x;
+      break;
+    default:
+      converted = coordinates;
+  }
+  return converted;
+};
+
+function convertFromXZ(coordinates, to) {
+  console.info('converting from xz');
+  var converted = null;
+  switch (to) {
+    case 0:// xy
+      converted = new OpenSeadragon.Point(coordinates.x, coordinates.z);
+      converted.z = coordinates.y;
+      break;
+    case 2:// yz
+      converted = new OpenSeadragon.Point(coordinates.y, coordinates.x);
+      converted.z = coordinates.z;
+      break;
+    default:
+      converted = coordinates;
+  }
+  return converted;
+};
+function convertFromYZ(coordinates, to) {
+  console.info('converting from yz');
+  var converted = null;
+  switch (to) {
+    case 0:// xy
+      converted = new OpenSeadragon.Point(coordinates.y, coordinates.z);
+      converted.z = coordinates.x;
+      break;
+    case 1:// xz
+      converted = new OpenSeadragon.Point(coordinates.y, coordinates.x);
+      converted.z = coordinates.z;
+      break;
+    default:
+      converted = coordinates;
+  }
+  return converted;
+};
 
