@@ -140,8 +140,14 @@ var TileMapArea = React.createClass({
           });
 
           window.viewer = viewer;
-          img_helper = viewer.xy.activateImagingHelper({viewChangedHandler: onImageViewChanged });
+          img_helper = viewer.xy.activateImagingHelper();
           window.img_helper = img_helper;
+
+          img_helper.addHandler('image-view-changed', function (event) {
+            var center = event.viewportCenter;
+            $('#displayX').html(Math.round(img_helper.logicalToDataX(center.x)));
+            $('#displayY').html(Math.round(img_helper.logicalToDataY(center.y)));
+          });
 
         });
     }
@@ -285,6 +291,13 @@ var TileMapArea = React.createClass({
               </form>
             </div>
           </div>
+          <div className="row">
+            <div className="col-sm-12">
+              <p>X: <span id="displayX"></span></p>
+              <p>Y: <span id="displayY"></span></p>
+              <p>Z: {this.state.layer} </p>
+            </div>
+          </div>
         </div>
     );
   }
@@ -292,9 +305,6 @@ var TileMapArea = React.createClass({
 
 module.exports = TileMapArea;
 
-function onImageViewChanged(event) {
-  console.info(event);
-};
 
 function convertCoordinates (input) {
   console.info(input.coordinates);
