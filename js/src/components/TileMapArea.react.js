@@ -162,7 +162,10 @@ var TileMapArea = React.createClass({
                   elt.src = '/overlay.png'
                   viewer.xy.addOverlay({
                       element: elt,
-                      location: new OpenSeadragon.Rect(0.33, 0.35, 0.2, 0.25)
+                      // attempt to place the image in the correct location on the tile map.
+                      // this seems to be off by between 50 - 100 pixels. Not production ready.
+                      // must be some rounding errors in scale changes whilst zooming.
+                      location: new OpenSeadragon.Rect(img_helper.dataToLogicalX(3400), img_helper.dataToLogicalY(3500), img_helper.dataToLogicalX(512), img_helper.dataToLogicalY(512))
                   });
               }
               overlay = !overlay;
