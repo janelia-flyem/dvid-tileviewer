@@ -156,12 +156,13 @@ var TileMapArea = React.createClass({
               if (overlay) {
                   viewer.xy.removeOverlay("runtime-overlay");
               } else {
-                  var elt = document.createElement("div");
+                  var elt = document.createElement("img");
                   elt.id = "runtime-overlay";
                   elt.className = "highlight";
+                  elt.src = '/overlay.png'
                   viewer.xy.addOverlay({
                       element: elt,
-                      location: new OpenSeadragon.Rect(0.33, 0.75, 0.2, 0.25)
+                      location: new OpenSeadragon.Rect(0.33, 0.35, 0.2, 0.25)
                   });
               }
               overlay = !overlay;
