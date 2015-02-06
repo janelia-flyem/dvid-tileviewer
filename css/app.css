@@ -41,3 +41,8 @@
 h1 {
   margin-top: 0;
 }
+
+.highlight {
+  border: 2px solid #0A7EBE;
+  outline: 10px auto #0A7EBE;
+}

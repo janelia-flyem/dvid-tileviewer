@@ -149,6 +149,24 @@ var TileMapArea = React.createClass({
             $('#displayY').html(Math.round(img_helper.logicalToDataY(center.y)));
           });
 
+          var overlay = false;
+
+          $("#toggle-overlay").click(function(e) {
+              e.preventDefault();
+              if (overlay) {
+                  viewer.xy.removeOverlay("runtime-overlay");
+              } else {
+                  var elt = document.createElement("div");
+                  elt.id = "runtime-overlay";
+                  elt.className = "highlight";
+                  viewer.xy.addOverlay({
+                      element: elt,
+                      location: new OpenSeadragon.Rect(0.33, 0.75, 0.2, 0.25)
+                  });
+              }
+              overlay = !overlay;
+          });
+
         });
     }
   },
@@ -263,6 +281,7 @@ var TileMapArea = React.createClass({
                 <button type="button" className="btn btn-default" id="zoom-in">Zoom In</button>
                 <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
                 <button type="button" className="btn btn-default" id="full-page">Full Screen</button>
+                <button id="toggle-overlay">overlay</button>
                 <select value={this.state.plane} className="form-control cut_plane" onChange={this.handlePlaneChange}>
                   <option value="0">xy</option>
                   <option value="1">xz</option>
