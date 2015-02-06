@@ -115,7 +115,7 @@ var TileMapArea = React.createClass({
             // need to be able to pass in the react state, so that we can modify it
             // when using the other buttons to change z layer.
             id:                 "viewer",
-            prefixUrl:          "/js/openseadragon/images/",
+            prefixUrl:          "/js/vendor/openseadragon/images/",
             navigatorSizeRatio: 0.25,
             wrapHorizontal:     false,
             maxZoomPixelRatio:  5.0,
