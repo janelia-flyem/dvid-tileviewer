@@ -226,6 +226,9 @@ var TileMapArea = React.createClass({
     // change the layer
     this.setState({layer: z});
     this.handleLayerChange(z);
+    this.refs.horizontal.getDOMNode().value = '';
+    this.refs.vertical.getDOMNode().value = '';
+    this.refs.depth.getDOMNode().value = '';
 
   },
 
