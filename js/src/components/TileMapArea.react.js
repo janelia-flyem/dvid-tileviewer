@@ -213,15 +213,12 @@ var TileMapArea = React.createClass({
   handleCoordinateChange: function(event) {
     event.preventDefault();
 
-    console.log([this.refs.horizontal.getDOMNode().value.trim(), this.refs.vertical.getDOMNode().value.trim()]);
-
     var x = parseInt(this.refs.horizontal.getDOMNode().value.trim(), 10);
     var y = parseInt(this.refs.vertical.getDOMNode().value.trim(), 10);
     var z = parseInt(this.refs.depth.getDOMNode().value.trim(), 10);
 
     var point = new OpenSeadragon.Point(x,y);
     var logical = img_helper.dataToLogicalPoint(point);
-    console.log([point, logical]);
 
     //scroll to the point in the plane
     img_helper.centerAboutLogicalPoint(logical);
@@ -254,14 +251,15 @@ var TileMapArea = React.createClass({
     $('#depth').attr('max', depth);
     $('#stack-slider').attr('max', depth);
 
-    viewer.xy.addHandler('page', function() {
-      console.info('page changed');
-    });
 
     // coordinate conversion method here
     var converted = convertCoordinates({coordinates: coordinates, from: this.state.plane, to: choice});
-    this.setState({layer: Math.round(converted.z)});
+
+    var z = Math.round(converted.z);
+    this.setState({layer: z});
     this.setState({plane: choice});
+
+    this.handleLayerChange(z);
     // need to move the image to the correct coordinates how to do this via openseqdragon?
     img_helper.centerAboutLogicalPoint(img_helper.dataToLogicalPoint(converted), true);
     img_helper.setZoomFactor(zoomFactor, true);
@@ -333,7 +331,6 @@ module.exports = TileMapArea;
 
 
 function convertCoordinates (input) {
-  console.info(input.coordinates);
   var converted = null;
   switch (input.from) {
     case 0:// xy
@@ -349,12 +346,10 @@ function convertCoordinates (input) {
       converted = input.coordinates;
   }
 
-  console.info(converted);
   return converted;
 };
 
 function convertFromXY(coordinates, to) {
-  console.info('converting from xy');
   var converted = null;
   switch (to) {
     case 1:// xz
@@ -372,7 +367,6 @@ function convertFromXY(coordinates, to) {
 };
 
 function convertFromXZ(coordinates, to) {
-  console.info('converting from xz');
   var converted = null;
   switch (to) {
     case 0:// xy
@@ -389,7 +383,6 @@ function convertFromXZ(coordinates, to) {
   return converted;
 };
 function convertFromYZ(coordinates, to) {
-  console.info('converting from yz');
   var converted = null;
   switch (to) {
     case 0:// xy
