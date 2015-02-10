@@ -149,6 +149,10 @@ var TileMapArea = React.createClass({
             $('#displayY').html(Math.round(img_helper.logicalToDataY(center.y)));
           });
 
+          viewer.xy.addHandler('page', function() {
+            console.info('page changed');
+          });
+
           var overlay = false;
 
           $("#toggle-overlay").click(function(e) {
@@ -255,6 +259,8 @@ var TileMapArea = React.createClass({
     // coordinate conversion method here
     var converted = convertCoordinates({coordinates: coordinates, from: this.state.plane, to: choice});
 
+    console.log(converted);
+
     var z = Math.round(converted.z);
     this.setState({layer: z});
     this.setState({plane: choice});
@@ -350,15 +356,18 @@ function convertCoordinates (input) {
 };
 
 function convertFromXY(coordinates, to) {
+  console.log([coordinates.x, coordinates.y, coordinates.z]);
   var converted = null;
   switch (to) {
-    case 1:// xz
+    case 1:// xz okay
       converted = new OpenSeadragon.Point(coordinates.x, coordinates.z);
       converted.z = coordinates.y;
+      console.log([converted.x, converted.y, converted.z]);
       break;
-    case 2:// yz
+    case 2:// yz okay
       converted = new OpenSeadragon.Point(coordinates.y, coordinates.z);
       converted.z = coordinates.x;
+      console.log([converted.x, converted.y, converted.z]);
       break;
     default:
       converted = coordinates;
@@ -367,15 +376,18 @@ function convertFromXY(coordinates, to) {
 };
 
 function convertFromXZ(coordinates, to) {
+  console.log([coordinates.x, coordinates.y, coordinates.z]);
   var converted = null;
   switch (to) {
-    case 0:// xy
+    case 0:// xy okay
       converted = new OpenSeadragon.Point(coordinates.x, coordinates.z);
       converted.z = coordinates.y;
+      console.log([converted.x, converted.y, converted.z]);
       break;
     case 2:// yz
-      converted = new OpenSeadragon.Point(coordinates.y, coordinates.x);
-      converted.z = coordinates.z;
+      converted = new OpenSeadragon.Point(coordinates.z, coordinates.y);
+      converted.z = coordinates.x;
+      console.log([converted.x, converted.y, converted.z]);
       break;
     default:
       converted = coordinates;
@@ -383,15 +395,18 @@ function convertFromXZ(coordinates, to) {
   return converted;
 };
 function convertFromYZ(coordinates, to) {
+  console.log([coordinates.x, coordinates.y, coordinates.z]);
   var converted = null;
   switch (to) {
     case 0:// xy
-      converted = new OpenSeadragon.Point(coordinates.y, coordinates.z);
-      converted.z = coordinates.x;
+      converted = new OpenSeadragon.Point(coordinates.z, coordinates.x);
+      converted.z = coordinates.y;
+      console.log([converted.x, converted.y, converted.z]);
       break;
     case 1:// xz
       converted = new OpenSeadragon.Point(coordinates.y, coordinates.x);
       converted.z = coordinates.z;
+      console.log([converted.x, converted.y, converted.z]);
       break;
     default:
       converted = coordinates;
