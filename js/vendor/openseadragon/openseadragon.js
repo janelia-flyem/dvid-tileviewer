@@ -1,5 +1,5 @@
 //! OpenSeadragon 1.0.0
-//! Built on 2015-02-09
+//! Built on 2015-02-10
 //! Git commit: v1.0.0-157-gc150d9a-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
@@ -7370,13 +7370,13 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
       $.requestAnimationFrame(function() {
         if ( self.viewport ) {
           THIS[ self.hash ].slicing = false;
-          THIS[ self.hash ].forceRedraw = true;
           self.viewport.z = Math.min(layer, self.source.maxZ);
           self.viewport.z = Math.max(layer, self.source.minZ);
-            if (self.navigator && self.navigator.drawer.viewport) {
-              self.navigator.drawer.viewport.z = self.viewport.z;
-              THIS[ self.navigator.hash ].forceRedraw = true;
-            }
+          if (self.navigator && self.navigator.drawer.viewport) {
+            self.navigator.drawer.viewport.z = self.viewport.z;
+            THIS[ self.navigator.hash ].forceRedraw = true;
+          }
+          THIS[ self.hash ].forceRedraw = true;
         }
       });
     },
@@ -7407,7 +7407,6 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
              * @property {Number} page - The page index.
              * @property {?Object} userData - Arbitrary subscriber-defined object.
              */
-            this.raiseEvent( 'page', { page: page } );
 
             THIS[ this.hash ].sequence = page;
 
@@ -7418,6 +7417,7 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
             if( this.referenceStrip ){
                 this.referenceStrip.setFocus( page );
             }
+            this.raiseEvent( 'page', { page: page } );
         }
 
         return this;

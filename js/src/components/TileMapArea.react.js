@@ -16,6 +16,7 @@ var TileMapArea = React.createClass({
   },
 
   componentWillReceiveProps: function (props) {
+    var self = this;
     if (props.instances && props.instances.graytiles) {
       var node = this.getDOMNode();
       var uuid = this.props.uuid;
@@ -149,9 +150,51 @@ var TileMapArea = React.createClass({
             $('#displayY').html(Math.round(img_helper.logicalToDataY(center.y)));
           });
 
-          viewer.xy.addHandler('page', function() {
-            console.info('page changed');
+          viewer.recenter = false;
+
+          viewer.xy.addHandler('page', function(event) {
+            var choice = parseInt($('.cut_plane').val());
+            var coordinates = img_helper.logicalToDataPoint(img_helper._viewportCenter);
+            coordinates.z = Math.round($('#depth').val());
+
+
+            // need to move the image to the correct coordinates in the viewer?
+            var converted = convertCoordinates({coordinates: coordinates, from: self.state.plane, to: choice});
+            var z = Math.round(converted.z);
+
+            // save this information to be used later in the open event handler,
+            // when the image has finished updating and we can scroll to the correct
+            // location.
+            viewer.recenter = {
+              from: self.state.plane,
+              to: choice,
+              coordinates: converted
+            };
+
+
+            self.setState({layer: z});
+            self.setState({plane: choice});
+
+            // make sure the layer is updated after the page change
+            self.handleLayerChange(z);
+
+
           });
+
+          // we have to have the center function triggered in the open event, because
+          // it fires off too soon in the page event and the image width is incorrect.
+          // This causes it to center in the wrong location.
+          viewer.xy.addHandler('open', function(event) {
+
+            if (viewer.recenter) {
+
+              var logicalPoint = img_helper.dataToLogicalPoint(viewer.recenter.coordinates);
+              img_helper.centerAboutLogicalPoint(logicalPoint, true);
+            }
+
+            viewer.recenter = false;
+          });
+
 
           var overlay = false;
 
@@ -241,8 +284,6 @@ var TileMapArea = React.createClass({
     var choice = parseInt(event.target.value, 10);
 
     // get required values before the change
-    var zoomFactor  = img_helper.getZoomFactor();
-    console.info(zoomFactor);
     // need to figure out which coordinate we are moving to and set the slider accordingly.
     var coordinates = img_helper.logicalToDataPoint(img_helper._viewportCenter);
     coordinates.z = Math.round($('#depth').val());
@@ -256,19 +297,7 @@ var TileMapArea = React.createClass({
     $('#stack-slider').attr('max', depth);
 
 
-    // coordinate conversion method here
-    var converted = convertCoordinates({coordinates: coordinates, from: this.state.plane, to: choice});
 
-    console.log(converted);
-
-    var z = Math.round(converted.z);
-    this.setState({layer: z});
-    this.setState({plane: choice});
-
-    this.handleLayerChange(z);
-    // need to move the image to the correct coordinates how to do this via openseqdragon?
-    img_helper.centerAboutLogicalPoint(img_helper.dataToLogicalPoint(converted), true);
-    img_helper.setZoomFactor(zoomFactor, true);
   },
 
   render: function() {
@@ -356,18 +385,15 @@ function convertCoordinates (input) {
 };
 
 function convertFromXY(coordinates, to) {
-  console.log([coordinates.x, coordinates.y, coordinates.z]);
   var converted = null;
   switch (to) {
     case 1:// xz okay
       converted = new OpenSeadragon.Point(coordinates.x, coordinates.z);
       converted.z = coordinates.y;
-      console.log([converted.x, converted.y, converted.z]);
       break;
     case 2:// yz okay
       converted = new OpenSeadragon.Point(coordinates.y, coordinates.z);
       converted.z = coordinates.x;
-      console.log([converted.x, converted.y, converted.z]);
       break;
     default:
       converted = coordinates;
@@ -376,18 +402,15 @@ function convertFromXY(coordinates, to) {
 };
 
 function convertFromXZ(coordinates, to) {
-  console.log([coordinates.x, coordinates.y, coordinates.z]);
   var converted = null;
   switch (to) {
     case 0:// xy okay
       converted = new OpenSeadragon.Point(coordinates.x, coordinates.z);
       converted.z = coordinates.y;
-      console.log([converted.x, converted.y, converted.z]);
       break;
     case 2:// yz okay
       converted = new OpenSeadragon.Point(coordinates.z, coordinates.y);
       converted.z = coordinates.x;
-      console.log([converted.x, converted.y, converted.z]);
       break;
     default:
       converted = coordinates;
@@ -395,18 +418,15 @@ function convertFromXZ(coordinates, to) {
   return converted;
 };
 function convertFromYZ(coordinates, to) {
-  console.log([coordinates.x, coordinates.y, coordinates.z]);
   var converted = null;
   switch (to) {
     case 0:// xy okay
       converted = new OpenSeadragon.Point(coordinates.z, coordinates.x);
       converted.z = coordinates.y;
-      console.log([converted.x, converted.y, converted.z]);
       break;
     case 1:// xz okay
       converted = new OpenSeadragon.Point(coordinates.z, coordinates.y);
       converted.z = coordinates.x;
-      console.log([converted.x, converted.y, converted.z]);
       break;
     default:
       converted = coordinates;
