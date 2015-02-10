@@ -384,7 +384,7 @@ function convertFromXZ(coordinates, to) {
       converted.z = coordinates.y;
       console.log([converted.x, converted.y, converted.z]);
       break;
-    case 2:// yz
+    case 2:// yz okay
       converted = new OpenSeadragon.Point(coordinates.z, coordinates.y);
       converted.z = coordinates.x;
       console.log([converted.x, converted.y, converted.z]);
@@ -398,14 +398,14 @@ function convertFromYZ(coordinates, to) {
   console.log([coordinates.x, coordinates.y, coordinates.z]);
   var converted = null;
   switch (to) {
-    case 0:// xy
+    case 0:// xy okay
       converted = new OpenSeadragon.Point(coordinates.z, coordinates.x);
       converted.z = coordinates.y;
       console.log([converted.x, converted.y, converted.z]);
       break;
-    case 1:// xz
-      converted = new OpenSeadragon.Point(coordinates.y, coordinates.x);
-      converted.z = coordinates.z;
+    case 1:// xz okay
+      converted = new OpenSeadragon.Point(coordinates.z, coordinates.y);
+      converted.z = coordinates.x;
       console.log([converted.x, converted.y, converted.z]);
       break;
     default:
