@@ -336,6 +336,9 @@ var TileMapArea = React.createClass({
 
   },
 
+  //simply delegates to the updateViewerPlane() function. I would
+  //bypass this entirely, but it seems to have strange consequences
+  //on the state object.
   handlePlaneChange: function(event) {
     this.updateViewerPlane();
   },
