@@ -1,4 +1,6 @@
 var root = 'http://emdata2.int.janelia.org';
+var root = 'http://emrecon100.janelia.priv';
+//var root = 'http://tem-dvid';
 
 var settings = {
   datatype: 'grayscale'

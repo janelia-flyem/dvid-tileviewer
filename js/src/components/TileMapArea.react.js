@@ -17,13 +17,14 @@ var TileMapArea = React.createClass({
 
   componentWillReceiveProps: function (props) {
     var self = this;
-    if (props.instances && props.instances.graytiles) {
+
+    if (props.instances && props.instances[dataname]) {
       var node = this.getDOMNode();
       var uuid = this.props.uuid;
       // set the variables for the tile viewer based on data fetched from the server
       var url = config.baseUrl();
 
-      $.when($.ajax(config.datatypeInfoUrl(uuid, dataname)), $.ajax(config.datatypeInfoUrl(uuid, 'grayscale')))
+      $.when($.ajax(config.datatypeInfoUrl(uuid, dataname)), $.ajax(config.datatypeInfoUrl(uuid, dataname)))
         .done(function(tileRequest, grayscaleRequest) {
           var tileData = tileRequest[0],
             gScaleData = grayscaleRequest[0],
@@ -31,7 +32,7 @@ var TileMapArea = React.createClass({
             minPoint   = gScaleData.Extended.MinPoint,
             dx        = maxPoint[0] - minPoint[0],
             dy        = maxPoint[1] - minPoint[1],
-            dz        = maxPoint[2] - minPoint[2];
+            dz        = maxPoint[2];
 
           // set a default level of one unless we actually have tiling information
           var maxLevel = 4;
@@ -81,6 +82,8 @@ var TileMapArea = React.createClass({
               maxZ:      volumeDepth[slice1]-1,
               getTileUrl: function xyTileURL(level, x, y, z) {
                 var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
+                // for use when we have the tiles working
+                //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice1 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
                 return api_url;
               }
             },
@@ -94,6 +97,8 @@ var TileMapArea = React.createClass({
               maxZ:      volumeDepth[slice2]-1,
               getTileUrl: function xzTileURL(level, x, y, z) {
                 var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
+                // for use when we have the tiles working
+                //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice2 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
                 return api_url;
               }
             },
@@ -107,6 +112,8 @@ var TileMapArea = React.createClass({
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
                 var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
+                // for use when we have the tiles working
+                //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice3 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
                 return api_url;
               }
             }
@@ -132,7 +139,7 @@ var TileMapArea = React.createClass({
             preserveViewport:   true,
             fullPageButton:     "full-page",
             //immediateRender:    true,
-            debugMode:          true
+            debugMode:          false
           });
           viewer.xy.scalebar({
             pixelsPerMeter: 1000000000/viewer.nmPerPixel,
@@ -321,7 +328,7 @@ var TileMapArea = React.createClass({
                 <button type="button" className="btn btn-default" id="zoom-in">Zoom In</button>
                 <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
                 <button type="button" className="btn btn-default" id="full-page">Full Screen</button>
-                <button type="button" className="btn btn-default" id="toggle-overlay">overlay</button>
+                <button type="button" className="btn btn-default hidden" id="toggle-overlay">overlay</button>
                 <select value={this.state.plane} className="form-control cut_plane" onChange={this.handlePlaneChange}>
                   <option value="0">xy</option>
                   <option value="1">xz</option>
@@ -343,9 +350,9 @@ var TileMapArea = React.createClass({
           <div className="row">
             <div className="col-sm-12">
               <form name="coordinates" onSubmit={this.handleCoordinateChange}>
-                w<input id="horizontal" type="number" min="0" max="9999" ref="horizontal" />
-                h<input id="vertical" type="number" min="0" max="9999" ref="vertical" />
-                d<input id="depth" type="number" min="0" max="9999" ref="depth" />
+                w<input id="horizontal" type="number" min="0" max="99999" ref="horizontal" />
+                h<input id="vertical" type="number" min="0" max="99999" ref="vertical" />
+                d<input id="depth" type="number" min="0" max="99999" ref="depth" />
                 <button type="submit" id="coordinatechange">Go</button>
               </form>
             </div>
