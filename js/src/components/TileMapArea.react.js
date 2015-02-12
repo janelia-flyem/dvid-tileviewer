@@ -12,7 +12,14 @@ var React  = require('react'),
 var TileMapArea = React.createClass({
 
   getInitialState: function() {
-    return {coordinates: { x: 0, y: 0, z: 0}, layer: 0, plane: 0};
+    return {
+      x: 0,
+      y: 0,
+      z: 0,
+      layer: 0,
+      plane: 0,
+      segmentation: false
+    };
   },
 
   componentWillReceiveProps: function (props) {
@@ -116,7 +123,49 @@ var TileMapArea = React.createClass({
                 //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice3 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
                 return api_url;
               }
-            }
+            },
+            // composite for xy plane
+            {
+              height:    volumeHeight[slice1],
+              width:     volumeWidth[slice1],
+              tileSize:  tileSize,
+              minLevel:  0,
+              maxLevel:  maxLevel,
+              minZ:      0,
+              maxZ:      volumeDepth[slice1]-1,
+              getTileUrl: function xyTileURL(level, x, y, z) {
+                var api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
+                return api_url;
+              }
+            },
+            {
+              height:    volumeHeight[slice2],
+              width:     volumeWidth[slice2],
+              tileSize:  tileSize,
+              minLevel:  0,
+              maxLevel:  maxLevel,
+              minZ:      0,
+              maxZ:      volumeDepth[slice2]-1,
+              getTileUrl: function xzTileURL(level, x, y, z) {
+                var api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
+                return api_url;
+              }
+            },
+            {
+              height:    volumeHeight[slice3],
+              width:     volumeWidth[slice3],
+              tileSize:  tileSize,
+              minLevel:  0,
+              maxLevel:  maxLevel,
+              minZ:      0,
+              maxZ:      volumeDepth[slice3]-1,
+              getTileUrl: function yzTileURL(level, x, y, z) {
+                var api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
+                // for use when we have the tiles working
+                //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice3 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+                return api_url;
+              }
+            },
             ]
           };
           viewer.xy = OpenSeadragon({
@@ -152,9 +201,10 @@ var TileMapArea = React.createClass({
           window.img_helper = img_helper;
 
           img_helper.addHandler('image-view-changed', function (event) {
-            var center = event.viewportCenter;
-            $('#displayX').html(Math.round(img_helper.logicalToDataX(center.x)));
-            $('#displayY').html(Math.round(img_helper.logicalToDataY(center.y)));
+            var center = event.viewportCenter,
+              x = Math.round(img_helper.logicalToDataX(center.x)),
+              y = Math.round(img_helper.logicalToDataY(center.y));
+            self.setState({'x': x, 'y': y});
           });
 
           viewer.recenter = false;
@@ -287,13 +337,27 @@ var TileMapArea = React.createClass({
   },
 
   handlePlaneChange: function(event) {
-    // convert the value to an integer for later lookups
-    var choice = parseInt(event.target.value, 10);
+    this.updateViewerPlane();
+  },
 
-    // get required values before the change
-    // need to figure out which coordinate we are moving to and set the slider accordingly.
-    var coordinates = img_helper.logicalToDataPoint(img_helper._viewportCenter);
-    coordinates.z = Math.round($('#depth').val());
+  handleSegmentation: function (event) {
+    var currentSeg = this.state.segmentation;
+    this.setState({segmentation: !currentSeg});
+    this.updateViewerPlane(!currentSeg);
+  },
+
+  updateViewerPlane: function (currentSeg) {
+    if (typeof currentSeg == 'undefined') {
+      currentSeg = this.state.segmentation;
+    }
+    // convert the value to an integer for later lookups
+    var choice = parseInt(this.refs.cutPlane.getDOMNode().value, 10);
+
+    // if segmentation should be on, then use the correct tileSource by adding
+    // 3, so that we skip to the segmentation tile sources.
+    if (currentSeg) {
+      choice += 3;
+    }
 
     // update the tile viewer display.
     viewer.xy.goToPage(choice);
@@ -303,9 +367,8 @@ var TileMapArea = React.createClass({
     $('#depth').attr('max', depth);
     $('#stack-slider').attr('max', depth);
 
-
-
   },
+
 
   render: function() {
 
@@ -329,7 +392,8 @@ var TileMapArea = React.createClass({
                 <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
                 <button type="button" className="btn btn-default" id="full-page">Full Screen</button>
                 <button type="button" className="btn btn-default hidden" id="toggle-overlay">overlay</button>
-                <select value={this.state.plane} className="form-control cut_plane" onChange={this.handlePlaneChange}>
+                <button type="button" className="btn btn-default" id="toggle-composite" onClick={this.handleSegmentation}>Segmentation</button>
+                <select value={this.state.plane} className="form-control cut_plane" ref="cutPlane" onChange={this.handlePlaneChange}>
                   <option value="0">xy</option>
                   <option value="1">xz</option>
                   <option value="2">yz</option>
@@ -359,8 +423,8 @@ var TileMapArea = React.createClass({
           </div>
           <div className="row">
             <div className="col-sm-12">
-              <p>X: <span id="displayX"></span></p>
-              <p>Y: <span id="displayY"></span></p>
+              <p>X: {this.state.x}</p>
+              <p>Y: {this.state.y}</p>
               <p>Z: {this.state.layer} </p>
             </div>
           </div>
