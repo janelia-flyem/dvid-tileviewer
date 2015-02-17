@@ -386,7 +386,22 @@ var TileMapArea = React.createClass({
     }
 
     // need to figure out what plane we are in and change the XYZ labels accordingly.
+    //
 
+    var inputOne   = React.createElement('input',{'id': 'horizontal', 'type': 'number', 'min': 0, 'ref': 'horizontal'});
+    var inputTwo   = React.createElement('input',{'id': 'vertical', 'type': 'number', 'min': 0, 'ref': 'vertical'});
+    var inputThree = React.createElement('input',{'id': 'depth', 'type': 'number', 'min': 0, 'ref': 'depth'});
+
+    if (this.state.plane === 1) {
+      inputOne   = React.createElement('input',{'id': 'horizontal', 'type': 'number', 'min': 0, 'ref': 'horizontal'});
+      inputTwo   = React.createElement('input',{'id': 'depth', 'type': 'number', 'min': 0, 'ref': 'depth'});
+      inputThree = React.createElement('input',{'id': 'vertical', 'type': 'number', 'min': 0, 'ref': 'vertical'});
+    }
+    else if (this.state.plane === 2) {
+      inputOne   = React.createElement('input',{'id': 'depth', 'type': 'number', 'min': 0, 'ref': 'depth'});
+      inputTwo   = React.createElement('input',{'id': 'horizontal', 'type': 'number', 'min': 0, 'ref': 'horizontal'});
+      inputThree = React.createElement('input',{'id': 'vertical', 'type': 'number', 'min': 0, 'ref': 'vertical'});
+    }
 
 
     return (
@@ -422,9 +437,9 @@ var TileMapArea = React.createClass({
           <div className="row">
             <div className="col-sm-12">
               <form name="coordinates" onSubmit={this.handleCoordinateChange}>
-                w<input id="horizontal" type="number" min="0" ref="horizontal" />
-                h<input id="vertical" type="number" min="0" ref="vertical" />
-                d<input id="depth" type="number" min="0" ref="depth" />
+                <label>x</label>{inputOne}
+                <label>y</label>{inputTwo}
+                <label>z</label>{inputThree}
                 <button type="submit" id="coordinatechange">Go</button>
               </form>
             </div>
