@@ -7,7 +7,6 @@ var TileCoordinates = React.createClass({
   },
 
   render: function () {
-    console.log(this.props);
     var x = this.props.width,
       y = this.props.height,
       z = this.props.depth;
