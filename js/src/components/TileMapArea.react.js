@@ -3,6 +3,7 @@ var React  = require('react'),
   config   = require('../common/config'),
   core     = require('../common/core'),
   dataname = config.settings.datatype,
+  TileCoordinates = require('./TileCoordinates.react'),
   slice1    = 'xy',
   slice2    = 'xz',
   slice3    = 'yz',
@@ -384,6 +385,10 @@ var TileMapArea = React.createClass({
       );
     }
 
+    // need to figure out what plane we are in and change the XYZ labels accordingly.
+
+
+
     return (
         <div>
           <div id="toolbar">
@@ -417,18 +422,16 @@ var TileMapArea = React.createClass({
           <div className="row">
             <div className="col-sm-12">
               <form name="coordinates" onSubmit={this.handleCoordinateChange}>
-                w<input id="horizontal" type="number" min="0" max="99999" ref="horizontal" />
-                h<input id="vertical" type="number" min="0" max="99999" ref="vertical" />
-                d<input id="depth" type="number" min="0" max="99999" ref="depth" />
+                w<input id="horizontal" type="number" min="0" ref="horizontal" />
+                h<input id="vertical" type="number" min="0" ref="vertical" />
+                d<input id="depth" type="number" min="0" ref="depth" />
                 <button type="submit" id="coordinatechange">Go</button>
               </form>
             </div>
           </div>
           <div className="row">
             <div className="col-sm-12">
-              <p>X: {this.state.x}</p>
-              <p>Y: {this.state.y}</p>
-              <p>Z: {this.state.layer} </p>
+            <TileCoordinates width={this.state.x} height={this.state.y} depth={this.state.layer} plane={this.state.plane}/>
             </div>
           </div>
         </div>
