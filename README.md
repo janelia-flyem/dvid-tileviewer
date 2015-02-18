@@ -2,7 +2,7 @@ DVID Volume Viewer
 ===============
 
 The DVID Volume Viewer is a javascript, browser based, tool for viewing the grayscale
-imagery and segmentation data within a repository. It leverages the
+imagery and segmentation data within a [DVID](https://github.com/janelia-flyem/dvid) repository. It leverages the
 [OpenSeadragon](openseadragon.github.io) tile viewer with some additional features specific
 to this data type. For example, the imagery data can be interrogated in the XY, XZ, and YZ
 cut planes. There is also an interface to allow quick navigation to any point in the 3D volume.
