@@ -3,6 +3,7 @@ var React  = require('react'),
   config   = require('../common/config'),
   core     = require('../common/core'),
   dataname = config.settings.datatype,
+  infotype = config.settings.infotype,
   TileCoordinates = require('./TileCoordinates.react'),
   slice1    = 'xy',
   slice2    = 'xz',
@@ -32,7 +33,7 @@ var TileMapArea = React.createClass({
       // set the variables for the tile viewer based on data fetched from the server
       var url = config.baseUrl();
 
-      $.when($.ajax(config.datatypeInfoUrl(uuid, dataname)), $.ajax(config.datatypeInfoUrl(uuid, dataname)))
+      $.when($.ajax(config.datatypeInfoUrl(uuid, dataname)), $.ajax(config.datatypeInfoUrl(uuid, infotype)))
         .done(function(tileRequest, grayscaleRequest) {
           var tileData = tileRequest[0],
             gScaleData = grayscaleRequest[0],
@@ -89,9 +90,9 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice1]-1,
               getTileUrl: function xyTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
+                //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
                 // for use when we have the tiles working
-                //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice1 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice1 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
                 return api_url;
               }
             },
@@ -104,9 +105,9 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice2]-1,
               getTileUrl: function xzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
+                //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
                 // for use when we have the tiles working
-                //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice2 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice2 + "/" + (maxLevel-level) + "/" + x + "_" + z + "_" + y;
                 return api_url;
               }
             },
@@ -119,9 +120,9 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
+                //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
                 // for use when we have the tiles working
-                //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice3 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice3 + "/" + (maxLevel-level) + "/" + z + "_" + y + "_" + x;
                 return api_url;
               }
             },
@@ -189,6 +190,9 @@ var TileMapArea = React.createClass({
             preserveViewport:   true,
             fullPageButton:     "full-page",
             //immediateRender:    true,
+            /*gestureSettingsMouse: {
+              clickToZoom: false
+            },*/
             debugMode:          false
           });
           viewer.xy.scalebar({
@@ -207,6 +211,11 @@ var TileMapArea = React.createClass({
               y = Math.round(img_helper.logicalToDataY(center.y));
             self.setState({'x': x, 'y': y});
           });
+
+          viewer.xy.addHandler('canvas-click', function(event) {
+            //console.log(img_helper.physicalToDataPoint(event.position));
+          });
+
 
           viewer.recenter = false;
 

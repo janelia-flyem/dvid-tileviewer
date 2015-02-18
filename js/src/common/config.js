@@ -3,8 +3,14 @@ var root = 'http://emrecon100.janelia.priv';
 //var root = 'http://tem-dvid';
 
 var settings = {
-  datatype: 'grayscale'
+  // the data instance that will be used to fetch the tiles
+  datatype: 'graytiles',
+  // the data instance that provides information about the
+  // dimensions of the volume. Sometimes, this is the same as
+  // the datatype.
+  infotype: 'grayscale',
 };
+
 
 exports.settings = settings;
 
