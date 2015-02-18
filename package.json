@@ -13,7 +13,8 @@
     "grunt-react": "^0.10.0",
     "grunt-contrib-uglify": "^0.7.0",
     "grunt-browserify": "^3.3.0",
-    "grunt-contrib-watch": "^0.6.1"
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-contrib-copy": "^0.7.0"
   },
   "license": "Janelia",
   "dependencies": {

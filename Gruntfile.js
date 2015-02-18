@@ -21,6 +21,16 @@ module.exports = function(grunt) {
         dest: 'js/build/bundle.min.js'
       }
     },
+    copy: {
+      main: {
+        files: [
+          {expand: true, src: ['css/*'], dest: 'dist/', filter: 'isFile'},
+          {expand: true, src: ['index.html'], dest: 'dist/', filter: 'isFile'},
+          {expand: true, src: ['js/build/*'], dest: 'dist/', filter: 'isFile'},
+          {expand: true, src: ['js/vendor/**'], dest: 'dist/', filter: 'isFile'}
+        ]
+      }
+    },
     watch: {
       scripts: {
         files: ['js/src/**/*.js'],
@@ -33,8 +43,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   // Default task(s).
-  grunt.registerTask('default', ['browserify','uglify']);
+  grunt.registerTask('default', ['browserify','uglify','copy']);
 
 };
