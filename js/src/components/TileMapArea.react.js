@@ -91,8 +91,7 @@ var TileMapArea = React.createClass({
               maxZ:      volumeDepth[slice1]-1,
               getTileUrl: function xyTileURL(level, x, y, z) {
                 //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
-                // for use when we have the tiles working
-                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice1 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+                var api_url = config.tileFetchUrl(uuid, maxLevel - level, slice1, x, y, z);
                 return api_url;
               }
             },
@@ -106,8 +105,7 @@ var TileMapArea = React.createClass({
               maxZ:      volumeDepth[slice2]-1,
               getTileUrl: function xzTileURL(level, x, y, z) {
                 //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
-                // for use when we have the tiles working
-                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice2 + "/" + (maxLevel-level) + "/" + x + "_" + z + "_" + y;
+                var api_url = config.tileFetchUrl(uuid, maxLevel - level, slice2, x, z, y);
                 return api_url;
               }
             },
@@ -121,8 +119,7 @@ var TileMapArea = React.createClass({
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
                 //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
-                // for use when we have the tiles working
-                var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice3 + "/" + (maxLevel-level) + "/" + z + "_" + y + "_" + x;
+                var api_url = config.tileFetchUrl(uuid, maxLevel - level, slice3, z, y, x);
                 return api_url;
               }
             },
