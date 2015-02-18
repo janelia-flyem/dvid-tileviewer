@@ -43,12 +43,12 @@ Installation
 Usage
 ----
 
-The packaged version of the code can be found in the 'dist' directory at the top level
-of the repository. This directory can be uploaded to a webservers html directory for
+The packaged version of the code can be found in the *'dist'* directory at the top level
+of the repository. This directory can be uploaded to the html directory of a webserver for
 use in production.
 
-Alternatively, you can just open the index.html file in your browser from the File menu
-and it will load in the data from your DVID instance.
+Alternatively, you can just open the *index.html* file, found in the *'dist'* directory, in
+your browser from the **File** menu and it will load in the data from your DVID instance.
 
 License
 ----
