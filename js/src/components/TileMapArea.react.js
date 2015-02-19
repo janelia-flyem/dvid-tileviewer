@@ -41,13 +41,34 @@ var TileMapArea = React.createClass({
             minPoint   = gScaleData.Extended.MinPoint,
             dx        = maxPoint[0] - minPoint[0],
             dy        = maxPoint[1] - minPoint[1],
-            dz        = maxPoint[2];
+            dz        = maxPoint[2] - minPoint[2];
 
           // set a default level of one unless we actually have tiling information
           var maxLevel = 4;
           if (tileData.Extended && tileData.Extended.Levels) {
             maxLevel = Object.keys(tileData.Extended.Levels).length - 1;
           }
+
+          // this works out the size of the image based on the number of tiles required
+          // to cover the complete image at the largest level.
+          //
+          //Notes from Bill.
+          //
+          //Say we have 500x500 tiles but our real volume size is 6133 x 7000 x 8000.
+          //In order to cover the real volume size, we have 5 scales.
+          //
+          //Scale 0 = no downres, so we have 6133/500 = 13 tiles along X to cover real X extent.
+          //Scale 1 = 2x, so we have 3067/500 = 7 tiles along X to cover the downres X extent
+          //Scale 2 = 4x, it’s now 1534/500 = 4 tiles
+          //Scale 3 = 8x, it’s now 717/500 = 2 tiles
+          //Scale 4 = 16x, one tile
+          //
+          //But this means to OpenSeadragon, the “tiled” X extent is really 500 x 16 = 8000 voxels.
+          //This will lead to a lot of empty padding at end of x, y, and z, but shouldn’t affect
+          //your offsets I believe.
+          //
+
+          var maxDimensions = 512 * Math.pow(2, maxLevel);
 
           var volumeWidth = {
             'xy': dx,
@@ -82,8 +103,8 @@ var TileMapArea = React.createClass({
             nmPerPixel: 10,
             tileSources: [
             {
-              height:    volumeHeight[slice1],
-              width:     volumeWidth[slice1],
+              height:    maxDimensions,
+              width:     maxDimensions,
               tileSize:  tileSize,
               minLevel:  0,
               maxLevel:  maxLevel,
@@ -96,8 +117,8 @@ var TileMapArea = React.createClass({
               }
             },
             {
-              height:    volumeHeight[slice2],
-              width:     volumeWidth[slice2],
+              height:    maxDimensions,
+              width:     maxDimensions,
               tileSize:  tileSize,
               minLevel:  0,
               maxLevel:  maxLevel,
@@ -110,8 +131,8 @@ var TileMapArea = React.createClass({
               }
             },
             {
-              height:    volumeHeight[slice3],
-              width:     volumeWidth[slice3],
+              height:    maxDimensions,
+              width:     maxDimensions,
               tileSize:  tileSize,
               minLevel:  0,
               maxLevel:  maxLevel,
@@ -119,14 +140,14 @@ var TileMapArea = React.createClass({
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
                 //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
-                var api_url = config.tileFetchUrl(uuid, maxLevel - level, slice3, z, y, x);
+                var api_url = config.tileFetchUrl(uuid, maxLevel - level, slice3, z, x, y);
                 return api_url;
               }
             },
             // composite for xy plane
             {
-              height:    volumeHeight[slice1],
-              width:     volumeWidth[slice1],
+              height:    maxDimensions,
+              width:     maxDimensions,
               tileSize:  tileSize,
               minLevel:  0,
               maxLevel:  maxLevel,
@@ -138,8 +159,8 @@ var TileMapArea = React.createClass({
               }
             },
             {
-              height:    volumeHeight[slice2],
-              width:     volumeWidth[slice2],
+              height:    maxDimensions,
+              width:     maxDimensions,
               tileSize:  tileSize,
               minLevel:  0,
               maxLevel:  maxLevel,
@@ -151,8 +172,8 @@ var TileMapArea = React.createClass({
               }
             },
             {
-              height:    volumeHeight[slice3],
-              width:     volumeWidth[slice3],
+              height:    maxDimensions,
+              width:     maxDimensions,
               tileSize:  tileSize,
               minLevel:  0,
               maxLevel:  maxLevel,
@@ -171,7 +192,7 @@ var TileMapArea = React.createClass({
             // need to be able to pass in the react state, so that we can modify it
             // when using the other buttons to change z layer.
             id:                 "viewer",
-            prefixUrl:          "/js/vendor/openseadragon/images/",
+            prefixUrl:          "js/vendor/openseadragon/images/",
             navigatorSizeRatio: 0.25,
             wrapHorizontal:     false,
             maxZoomPixelRatio:  5.0,
