@@ -195,7 +195,7 @@ var TileMapArea = React.createClass({
             prefixUrl:          "js/vendor/openseadragon/images/",
             navigatorSizeRatio: 0.25,
             wrapHorizontal:     false,
-            maxZoomPixelRatio:  5.0,
+            maxZoomPixelRatio:  1.8,
             showNavigator:      true,
             tileSources:        viewer.tileSources,
             //zoomPerClick:       1.0,
