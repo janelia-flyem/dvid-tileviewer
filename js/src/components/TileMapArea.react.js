@@ -443,7 +443,7 @@ var TileMapArea = React.createClass({
                 <button type="button" className="btn btn-default" id="home">Home</button>
                 <button type="button" className="btn btn-default" id="zoom-in">Zoom In</button>
                 <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
-                <button type="button" className="btn btn-default" id="full-page">Full Screen</button>
+                {/*<button type="button" className="btn btn-default" id="full-page">Full Screen</button>*/}
                 <button type="button" className="btn btn-default hidden" id="toggle-overlay">overlay</button>
                 <button type="button" className="btn btn-default" id="toggle-composite" onClick={this.handleSegmentation}>Segmentation</button>
                 <select value={this.state.plane} className="form-control cut_plane" ref="cutPlane" onChange={this.handlePlaneChange}>

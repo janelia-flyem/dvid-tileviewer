@@ -24,9 +24,7 @@ var TileCoordinates = React.createClass({
 
     return (
       <div>
-        <p>X: {x}</p>
-        <p>Y: {y}</p>
-        <p>Z: {z}</p>
+        <p>X: {x}, Y: {y}, Z: {z}</p>
       </div>
     );
   }
