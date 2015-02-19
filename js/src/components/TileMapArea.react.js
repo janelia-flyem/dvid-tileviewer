@@ -260,8 +260,6 @@ var TileMapArea = React.createClass({
             self.setState({layer: z});
             self.setState({plane: choice});
 
-            // make sure the layer is updated after the page change
-            self.handleLayerChange(z);
 
 
           });
@@ -278,6 +276,11 @@ var TileMapArea = React.createClass({
             }
 
             viewer.recenter = false;
+
+            // make sure the layer is updated after the page change and open event has been fired.
+            // had to move this after the open event, because the navigator wasn't fully loaded before
+            var z = Math.round($('#depth').val());
+            self.handleLayerChange(z);
           });
 
 

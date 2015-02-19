@@ -1,6 +1,6 @@
 //! OpenSeadragon 1.0.0
-//! Built on 2015-02-12
-//! Git commit: v1.0.0-159-ga53e8b4
+//! Built on 2015-02-19
+//! Git commit: v1.0.0-159-ga53e8b4-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -7358,21 +7358,14 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
     },
 
     updateLayer: function (layer) {
-      var self = this,
-        currentTime,
-        deltaTime,
-        newSlice,
-        incrSlice;
-
-      currentTime     = $.now();
-      deltaTime       = currentTime - THIS[ this.hash ].lastSliceTime;
+      var self = this;
 
       $.requestAnimationFrame(function() {
         if ( self.viewport ) {
           THIS[ self.hash ].slicing = false;
           self.viewport.z = Math.min(layer, self.source.maxZ);
           self.viewport.z = Math.max(layer, self.source.minZ);
-          if (self.navigator && self.navigator.drawer.viewport) {
+          if (self.navigator && self.navigator.drawer && self.navigator.drawer.viewport) {
             self.navigator.drawer.viewport.z = self.viewport.z;
             THIS[ self.navigator.hash ].forceRedraw = true;
           }
