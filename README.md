@@ -24,6 +24,10 @@ Installation
 
 2. Change directory to the root of the repository
 
+  ```shell
+  > cd /download/location/
+  ```
+
 3. Install dependencies
 
   ```shell
