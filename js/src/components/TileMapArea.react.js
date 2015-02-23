@@ -231,7 +231,19 @@ var TileMapArea = React.createClass({
           });
 
           viewer.xy.addHandler('canvas-click', function(event) {
-            //console.log(img_helper.physicalToDataPoint(event.position));
+            // if shift is held down, then  do something, otherwise ignore as we
+            // don't want to load a new page everytime someone clicks on the image.
+            if (event.shift) {
+              // run an ajax request to see if there is a body at the clicked coordinates
+              var coords = img_helper.physicalToDataPoint(event.position);
+              var z = Math.round($('#depth').val());
+              var bodiesUrl = url + '/api/node/' + uuid + '/bodies/label/' + Math.round(coords.x) + '_' + Math.round(coords.y) + '_' + z;
+              $.getJSON(bodiesUrl, function(data) {
+                if (data.Label && data.Label > 0) {
+                  window.location = 'http://emanalysis.janelia.org/Shark_Viewer.php?mode=skeleton&swc_file=shark_viewer_swc%2F' + data.Label + '.swc';
+                }
+              });
+            }
           });
 
 
