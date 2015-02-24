@@ -258,8 +258,7 @@ var TileMapArea = React.createClass({
               y = Math.round(img_helper.logicalToDataY(center.y)),
               tileSourceMapping = ['xy','xz','yz'];
             self.setState({'x': x, 'y': y});
-            var url = '/#/uuid/' + uuid + '/' + tileSourceMapping[self.state.plane] + '/' + x + '_' + y + '_' + self.state.layer;
-            history.pushState({},'',url);
+            updateUrl(uuid, tileSourceMapping[self.state.plane], x, y, self.state.layer);
           });
 
           viewer.xy.addHandler('canvas-click', function(event) {
@@ -382,6 +381,13 @@ var TileMapArea = React.createClass({
   handleLayerChange: function(layer) {
     if (viewer.xy && viewer.xy.viewport) {
       viewer.xy.updateLayer(layer);
+
+      var x = Math.round(img_helper.logicalToDataX(img_helper._viewportCenter.x));
+      var y = Math.round(img_helper.logicalToDataY(img_helper._viewportCenter.y));
+      var uuid = this.props.uuid;
+      var plane = this.props.plane;
+
+      updateUrl(uuid, plane, x, y, layer);
     }
   },
 
@@ -542,6 +548,11 @@ var TileMapArea = React.createClass({
 });
 
 module.exports = TileMapArea;
+
+function updateUrl(uuid, plane, x, y, z) {
+  var url = '/#/uuid/' + uuid + '/' + plane + '/' + x + '_' + y + '_' + z;
+  history.pushState({},'',url);
+};
 
 
 function convertCoordinates (input) {
