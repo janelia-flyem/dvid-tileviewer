@@ -24,14 +24,42 @@ var TileMapArea = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    console.log('did mount');
+  },
+
   componentWillReceiveProps: function (props) {
     var self = this;
+
+    if (viewer && viewer.xy) {
+      if (props.coordinateString) {
+        var coordinates = props.coordinateString.split('_');
+        var dataPoint = new OpenSeadragon.Point(parseInt(coordinates[0]),parseInt(coordinates[1]));
+        var logicalPoint = img_helper.dataToLogicalPoint(dataPoint);
+        img_helper.centerAboutLogicalPoint(logicalPoint, true);
+        self.setState({layer: coordinates[2]});
+        self.handleLayerChange(coordinates[2]);
+      }
+      return;
+    }
 
     if (props.instances && props.instances[dataname]) {
       var node = this.getDOMNode();
       var uuid = this.props.uuid;
       // set the variables for the tile viewer based on data fetched from the server
       var url = config.baseUrl();
+      var startingTileSource = 0;
+
+      // check if we have a plane in the url and modify the display accordingly.
+      if (props.plane) {
+        var tileSourceMapping = {
+          'xy': 0,
+          'xz': 1,
+          'yz': 2
+        };
+        startingTileSource = tileSourceMapping[props.plane];
+        self.setState({plane: startingTileSource});
+      }
 
       $.when($.ajax(config.datatypeInfoUrl(uuid, dataname)), $.ajax(config.datatypeInfoUrl(uuid, infotype)))
         .done(function(tileRequest, grayscaleRequest) {
@@ -207,10 +235,11 @@ var TileMapArea = React.createClass({
             nextButton:         "next",
             preserveViewport:   true,
             fullPageButton:     "full-page",
+            initialPage:        startingTileSource,
             //immediateRender:    true,
-            /*gestureSettingsMouse: {
-              clickToZoom: false
-            },*/
+            //gestureSettingsMouse: {
+            //  clickToZoom: false
+            //},
             debugMode:          false
           });
           viewer.xy.scalebar({
@@ -226,8 +255,11 @@ var TileMapArea = React.createClass({
           img_helper.addHandler('image-view-changed', function (event) {
             var center = event.viewportCenter,
               x = Math.round(img_helper.logicalToDataX(center.x)),
-              y = Math.round(img_helper.logicalToDataY(center.y));
+              y = Math.round(img_helper.logicalToDataY(center.y)),
+              tileSourceMapping = ['xy','xz','yz'];
             self.setState({'x': x, 'y': y});
+            var url = '/#/uuid/' + uuid + '/' + tileSourceMapping[self.state.plane] + '/' + x + '_' + y + '_' + self.state.layer;
+            history.pushState({},'',url);
           });
 
           viewer.xy.addHandler('canvas-click', function(event) {
@@ -293,6 +325,17 @@ var TileMapArea = React.createClass({
             // had to move this after the open event, because the navigator wasn't fully loaded before
             var z = Math.round($('#depth').val());
             self.handleLayerChange(z);
+
+            console.log(props);
+
+            if (props.coordinateString) {
+              var coordinates = props.coordinateString.split('_');
+              var dataPoint = new OpenSeadragon.Point(parseInt(coordinates[0]),parseInt(coordinates[1]));
+              var logicalPoint = img_helper.dataToLogicalPoint(dataPoint);
+              img_helper.centerAboutLogicalPoint(logicalPoint, true);
+              self.setState({layer: coordinates[2]});
+              self.handleLayerChange(coordinates[2]);
+            }
           });
 
 
@@ -330,8 +373,10 @@ var TileMapArea = React.createClass({
     }
   },
 
-  componentDidUpdate: function() {
+  comsponentWillUpdate: function() {
+  },
 
+  componentDidUpdate: function(prevProps, prevState) {
   },
 
   handleLayerChange: function(layer) {

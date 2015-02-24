@@ -9,10 +9,21 @@ var TileMap = React.createClass({
   getInitialState: function() {
     return {
       uuid: this.getParams().uuid,
+      plane: this.getParams().plane,
+      coordinateString: this.getParams().coordinates,
       repo: {
         DataInstances: {}
       }
     };
+  },
+
+  componentWillReceiveProps: function (props) {
+    var self = this;
+    this.setState({
+      plane: this.getParams().plane,
+      coordinateString: this.getParams().coordinates
+    });
+
   },
 
   componentDidMount: function () {
@@ -47,7 +58,7 @@ var TileMap = React.createClass({
             <DataInstances instances={this.state.repo.DataInstances} uuid={this.state.uuid}/>
           </div>
           <div className="col-sm-8">
-            <TileMapArea instances={this.state.repo.DataInstances} uuid={this.state.uuid}/>
+            <TileMapArea instances={this.state.repo.DataInstances} uuid={this.state.uuid} coordinateString={this.state.coordinateString} plane={this.state.plane}/>
           </div>
         </div>
       </div>

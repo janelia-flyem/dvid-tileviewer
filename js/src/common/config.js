@@ -2,7 +2,6 @@
 // contact.
 var root = 'http://hackathon.janelia.org';
 
-
 var settings = {
   // Set the data instance that will be used to fetch the tiles. This should
   // be a data instance of type multiscale2d.
