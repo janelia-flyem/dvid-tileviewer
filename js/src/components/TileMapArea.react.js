@@ -240,7 +240,7 @@ var TileMapArea = React.createClass({
               var bodiesUrl = url + '/api/node/' + uuid + '/bodies/label/' + Math.round(coords.x) + '_' + Math.round(coords.y) + '_' + z;
               $.getJSON(bodiesUrl, function(data) {
                 if (data.Label && data.Label > 0) {
-                  window.location = 'http://emanalysis.janelia.org/Shark_Viewer.php?mode=skeleton&swc_file=shark_viewer_swc%2F' + data.Label + '.swc';
+                  window.location = 'http://emanalysis.janelia.org/Shark_Viewer.php?mode=skeleton&swc_file=' + data.Label;
                 }
               });
             }
