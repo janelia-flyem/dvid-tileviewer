@@ -19,7 +19,7 @@ var TileMapArea = React.createClass({
       y: 0,
       z: 0,
       layer: 0,
-      plane: 0,
+      plane: undefined,
       segmentation: false,
       // this is initially set to true, so that we will update the location
       // of the tile viewer window on page load, but then not again after that.
@@ -30,7 +30,6 @@ var TileMapArea = React.createClass({
   },
 
   componentDidMount: function() {
-    console.log('did mount');
   },
 
   componentWillReceiveProps: function (props) {
@@ -330,8 +329,6 @@ var TileMapArea = React.createClass({
             var z = Math.round($('#depth').val());
             self.handleLayerChange(z);
 
-            console.log(props);
-
             if (props.coordinateString && self.state.url_update) {
               var coordinates = props.coordinateString.split('_');
               var dataPoint = new OpenSeadragon.Point(parseInt(coordinates[0]),parseInt(coordinates[1]));
@@ -393,7 +390,9 @@ var TileMapArea = React.createClass({
       var x = Math.round(img_helper.logicalToDataX(img_helper._viewportCenter.x));
       var y = Math.round(img_helper.logicalToDataY(img_helper._viewportCenter.y));
       var uuid = this.props.uuid;
-      var plane = this.props.plane;
+
+      var tileSourceMapping = ['xy','xz','yz'];
+      var plane = tileSourceMapping[this.state.plane];
 
       updateUrl(uuid, plane, x, y, layer);
     }
@@ -558,6 +557,7 @@ var TileMapArea = React.createClass({
 module.exports = TileMapArea;
 
 function updateUrl(uuid, plane, x, y, z) {
+  var plane = plane || 'xy';
   var url = '/#/uuid/' + uuid + '/' + plane + '/' + x + '_' + y + '_' + z;
   history.pushState({},'',url);
 };
