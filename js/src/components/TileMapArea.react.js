@@ -450,7 +450,19 @@ var TileMapArea = React.createClass({
   handleSegmentation: function (event) {
     var currentSeg = this.state.segmentation;
     this.setState({segmentation: !currentSeg});
-    this.updateViewerPlane(!currentSeg);
+    var choice = parseInt(this.refs.cutPlane.getDOMNode().value, 10);
+    if (!currentSeg) {
+      viewer.xy.addLayer({
+        tileSource: viewer.tileSources[choice + 3],
+        opacity: 0.5
+      });
+    }
+    else {
+      console.log(viewer);
+      if (viewer.layer) {
+        viewer.xy.removeLayer(viewer.layer);
+      }
+    };
   },
 
   updateViewerPlane: function (currentSeg) {
@@ -459,7 +471,6 @@ var TileMapArea = React.createClass({
     }
     // convert the value to an integer for later lookups
     var choice = parseInt(this.refs.cutPlane.getDOMNode().value, 10);
-
 
     // update the tile viewer display.
     viewer.xy.goToPage(choice);
@@ -477,12 +488,6 @@ var TileMapArea = React.createClass({
         opacity: 0.5
       });
     }
-    else {
-      if (viewer.layers) {
-        viewer.xy.removeLayer(viewer.layers);
-      }
-    };
-
   },
 
 
