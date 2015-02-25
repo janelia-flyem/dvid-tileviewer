@@ -281,6 +281,9 @@ var TileMapArea = React.createClass({
             }
           });
 
+          viewer.xy.addHandler('add-layer', function(event) {
+            viewer.layer = event.drawer;
+          });
 
           viewer.recenter = false;
 
@@ -457,11 +460,6 @@ var TileMapArea = React.createClass({
     // convert the value to an integer for later lookups
     var choice = parseInt(this.refs.cutPlane.getDOMNode().value, 10);
 
-    // if segmentation should be on, then use the correct tileSource by adding
-    // 3, so that we skip to the segmentation tile sources.
-    if (currentSeg) {
-      choice += 3;
-    }
 
     // update the tile viewer display.
     viewer.xy.goToPage(choice);
@@ -470,6 +468,20 @@ var TileMapArea = React.createClass({
     var depth = viewer.tileSources[choice].maxZ;
     $('#depth').attr('max', depth);
     $('#stack-slider').attr('max', depth);
+
+    // if segmentation should be on, then use the correct tileSource by adding
+    // 3, so that we skip to the segmentation tile sources.
+    if (currentSeg) {
+      viewer.xy.addLayer({
+        tileSource: viewer.tileSources[choice + 3],
+        opacity: 0.5
+      });
+    }
+    else {
+      if (viewer.layers) {
+        viewer.xy.removeLayer(viewer.layers);
+      }
+    };
 
   },
 
