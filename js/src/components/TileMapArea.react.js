@@ -20,7 +20,12 @@ var TileMapArea = React.createClass({
       z: 0,
       layer: 0,
       plane: 0,
-      segmentation: false
+      segmentation: false,
+      // this is initially set to true, so that we will update the location
+      // of the tile viewer window on page load, but then not again after that.
+      // The aim is to prevent a feedback loop where the url updates the
+      // image location which in turn updates the url, which updates the image location....
+      url_update: true,
     };
   },
 
@@ -32,7 +37,7 @@ var TileMapArea = React.createClass({
     var self = this;
 
     if (viewer && viewer.xy) {
-      if (props.coordinateString) {
+      if (props.coordinateString && self.state.url_update) {
         var coordinates = props.coordinateString.split('_');
         var dataPoint = new OpenSeadragon.Point(parseInt(coordinates[0]),parseInt(coordinates[1]));
         var logicalPoint = img_helper.dataToLogicalPoint(dataPoint);
@@ -327,12 +332,15 @@ var TileMapArea = React.createClass({
 
             console.log(props);
 
-            if (props.coordinateString) {
+            if (props.coordinateString && self.state.url_update) {
               var coordinates = props.coordinateString.split('_');
               var dataPoint = new OpenSeadragon.Point(parseInt(coordinates[0]),parseInt(coordinates[1]));
               var logicalPoint = img_helper.dataToLogicalPoint(dataPoint);
               img_helper.centerAboutLogicalPoint(logicalPoint, true);
-              self.setState({layer: coordinates[2]});
+              self.setState({
+                layer: coordinates[2],
+                url_update: false
+              });
               self.handleLayerChange(coordinates[2]);
             }
           });
