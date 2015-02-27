@@ -575,7 +575,7 @@ module.exports = TileMapArea;
 
 function updateUrl(uuid, plane, x, y, z) {
   var plane = plane || 'xy';
-  var url = '/#/uuid/' + uuid + '/' + plane + '/' + x + '_' + y + '_' + z;
+  var url = '#/uuid/' + uuid + '/' + plane + '/' + x + '_' + y + '_' + z;
   history.pushState({},'',url);
 };
 
