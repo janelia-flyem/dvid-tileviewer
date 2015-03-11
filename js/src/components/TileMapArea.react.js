@@ -186,7 +186,10 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice1]-1,
               getTileUrl: function xyTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
+                var api_url = null;
+                if (level == 4) {
+                  api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
+                }
                 return api_url;
               }
             },
@@ -199,7 +202,10 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice2]-1,
               getTileUrl: function xzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
+                var api_url = null;
+                if (level == 4) {
+                   api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
+                }
                 return api_url;
               }
             },
@@ -212,9 +218,10 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
-                // for use when we have the tiles working
-                //var api_url = url + "/api/node/" + uuid + "/" + dataname + "/tile/" + slice3 + "/" + (maxLevel-level) + "/" + x + "_" + y + "_" + z;
+                var api_url = null;
+                if (level == 4) {
+                  api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
+                }
                 return api_url;
               }
             },
