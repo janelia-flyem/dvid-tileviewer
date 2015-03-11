@@ -272,10 +272,11 @@ var TileMapArea = React.createClass({
               // run an ajax request to see if there is a body at the clicked coordinates
               var coords = img_helper.physicalToDataPoint(event.position);
               var z = Math.round($('#depth').val());
+              var axis = $('.cut_plane option:selected').text();
               var bodiesUrl = url + '/api/node/' + uuid + '/bodies/label/' + Math.round(coords.x) + '_' + Math.round(coords.y) + '_' + z;
               $.getJSON(bodiesUrl, function(data) {
                 if (data.Label && data.Label > 0) {
-                  window.location = 'http://emanalysis.janelia.org/Shark_Viewer.php?mode=skeleton&swc_file=' + data.Label;
+                  window.open('http://localhost:8021/index.html?id=' + data.Label + ';x=' + coords.x + ';y=' + coords.y + ';z=' + z + ';axis=' + axis);
                 }
               });
             }

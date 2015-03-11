@@ -1,6 +1,6 @@
 // Set the base url of the DVID server that you are trying to
 // contact.
-var root = 'http://hackathon.janelia.org';
+var root = 'http://emrecon100.janelia.priv';
 
 var settings = {
   // Set the data instance that will be used to fetch the tiles. This should
