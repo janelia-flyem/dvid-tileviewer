@@ -534,6 +534,9 @@ var TileMapArea = React.createClass({
       inputThree = React.createElement('input',{'id': 'vertical', 'type': 'number', 'min': 0, 'ref': 'vertical'});
     }
 
+    var segmentation_active = this.state.segmentation ? 'active' : '';
+    var seg_class= "btn btn-default " + segmentation_active;
+
 
     return (
         <div>
@@ -546,7 +549,7 @@ var TileMapArea = React.createClass({
                 <button type="button" className="btn btn-default" id="zoom-out">Zoom Out</button>
                 {/*<button type="button" className="btn btn-default" id="full-page">Full Screen</button>*/}
                 <button type="button" className="btn btn-default hidden" id="toggle-overlay">overlay</button>
-                <button type="button" className="btn btn-default" id="toggle-composite" onClick={this.handleSegmentation}>Segmentation</button>
+                <button type="button" className={seg_class} id="toggle-composite" onClick={this.handleSegmentation}>Segmentation</button>
                 <select value={this.state.plane} className="form-control cut_plane" ref="cutPlane" onChange={this.handlePlaneChange}>
                   <option value="0">xy</option>
                   <option value="1">xz</option>
