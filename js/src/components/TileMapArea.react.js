@@ -50,6 +50,7 @@ var TileMapArea = React.createClass({
     if (props.instances && props.instances[dataname]) {
       var node = this.getDOMNode();
       var uuid = this.props.uuid;
+      config.uuid = uuid;
       // set the variables for the tile viewer based on data fetched from the server
       var url = config.baseUrl();
       var startingTileSource = 0;
@@ -287,6 +288,11 @@ var TileMapArea = React.createClass({
                 }
               });
             }
+          });
+
+          viewer.xy.addHandler('open', function(event) {
+            _$osdCanvas = $(viewer.xy.canvas);
+            _$osdCanvas.on('mousemove.osdimaginghelper', onMouseMove);
           });
 
           viewer.xy.addHandler('add-layer', function(event) {
@@ -655,5 +661,30 @@ function convertFromYZ(coordinates, to) {
       converted = coordinates;
   }
   return converted;
+};
+
+// logs the underlying body id if present to the console.
+// this might be useful in the future, but would need better
+// integration into the page via a popup or something like
+// that. Just for debugging right now.
+function onMouseMove(event) {
+  return;
+  var url = config.baseUrl();
+  var uuid = config.uuid;
+  var z = Math.round($('#depth').val());
+  var osdmouse = OpenSeadragon.getMousePosition(event);
+
+  var offset = _$osdCanvas.offset();
+
+  var dataX = window.img_helper.physicalToDataX( event.pageX - offset.left );
+  var dataY = window.img_helper.physicalToDataY( event.pageY - offset.top  );
+
+  var bodiesUrl = url + '/api/node/' + uuid + '/bodies/label/' + Math.round(dataX) + '_' + Math.round(dataY) + '_' + z;
+  $.getJSON(bodiesUrl, function(data) {
+    if (data.Label && data.Label > 0) {
+      console.info(data.Label);
+    }
+  });
+
 };
 
