@@ -179,50 +179,46 @@ var TileMapArea = React.createClass({
             },
             // composite for xy plane
             {
+              virtualMode: 'segmentation',
               height:    maxDimensions,
               width:     maxDimensions,
               tileSize:  tileSize,
-              minLevel:  0,
+              minLevel:  maxLevel,
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice1]-1,
               getTileUrl: function xyTileURL(level, x, y, z) {
-                var api_url = null;
-                if (level == 4) {
-                  api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z + "/jpg:80";
-                }
+                var api_url = url + "/api/node/" + uuid + "/bodies/raw/0_1_2/512_512_1/" + (x * 512) + "_" + (y * 512) + "_" + z;
                 return api_url;
               }
             },
             {
+              virtualMode: 'segmentation',
               height:    maxDimensions,
               width:     maxDimensions,
               tileSize:  tileSize,
-              minLevel:  0,
+              minLevel:  maxLevel,
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice2]-1,
               getTileUrl: function xzTileURL(level, x, y, z) {
-                var api_url = null;
-                if (level == 4) {
-                   api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
-                }
+                var api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512) + "/jpg:80";
+                var api_url = url + "/api/node/" + uuid + "/bodies/raw/0_1_2/512_1_512/" + (x * 512) + "_" + z + "_" + (y * 512);
                 return api_url;
               }
             },
             {
+              virtualMode: 'segmentation',
               height:    maxDimensions,
               width:     maxDimensions,
               tileSize:  tileSize,
-              minLevel:  0,
+              minLevel:  maxLevel,
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
-                var api_url = null;
-                if (level == 4) {
-                  api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
-                }
+                var api_url = url + "/api/node/" + uuid + "/bodyview/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512) + "/jpg:80";
+                var api_url = url + "/api/node/" + uuid + "/bodies/raw/0_1_2/1_512_512/" + z + "_" + (x * 512) + "_" + (y * 512);
                 return api_url;
               }
             },
@@ -468,11 +464,10 @@ var TileMapArea = React.createClass({
     if (!currentSeg) {
       viewer.xy.addLayer({
         tileSource: viewer.tileSources[choice + 3],
-        opacity: 0.5
+        opacity: 0.4
       });
     }
     else {
-      console.log(viewer);
       if (viewer.layer) {
         viewer.xy.removeLayer(viewer.layer);
       }

@@ -46,3 +46,12 @@ h1 {
   border: 2px solid #0A7EBE;
   outline: 10px auto #0A7EBE;
 }
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+  outline: none;
+}
