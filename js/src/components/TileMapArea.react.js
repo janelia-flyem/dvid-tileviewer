@@ -5,6 +5,7 @@ var React  = require('react'),
   dataname = config.settings.datatype,
   infotype = config.settings.infotype,
   TileCoordinates = require('./TileCoordinates.react'),
+  SparseVolViewer = require('./SparseVolViewer.react'),
   slice1    = 'xy',
   slice2    = 'xz',
   slice3    = 'yz',
@@ -19,6 +20,7 @@ var TileMapArea = React.createClass({
       y: 0,
       z: 0,
       layer: 0,
+      volumeViewer: false,
       plane: undefined,
       segmentation: false,
       // this is initially set to true, so that we will update the location
@@ -26,6 +28,12 @@ var TileMapArea = React.createClass({
       // The aim is to prevent a feedback loop where the url updates the
       // image location which in turn updates the url, which updates the image location....
       url_update: true,
+      //for use by the sprsevolume viewer child.
+      click_x: null,
+      click_y: null,
+      click_z: null,
+      click_axis: null,
+      click_label: null,
     };
   },
 
@@ -271,18 +279,26 @@ var TileMapArea = React.createClass({
 
           viewer.xy.addHandler('canvas-click', function(event) {
             // if shift is held down, then  do something, otherwise ignore as we
-            // don't want to load a new page everytime someone clicks on the image.
+            // don't want to load a new page every time someone clicks on the image.
             if (event.shift) {
               // run an ajax request to see if there is a body at the clicked coordinates
               var coords = img_helper.physicalToDataPoint(event.position);
               var z = Math.round($('#depth').val());
-              var axis = $('.cut_plane option:selected').text();
               var bodiesUrl = url + '/api/node/' + uuid + '/bodies/label/' + Math.round(coords.x) + '_' + Math.round(coords.y) + '_' + z;
-              $.getJSON(bodiesUrl, function(data) {
-                if (data.Label && data.Label > 0) {
-                  window.open('http://localhost:8021/index.html?id=' + data.Label + ';x=' + coords.x + ';y=' + coords.y + ';z=' + z + ';axis=' + axis);
-                }
-              });
+                $.getJSON(bodiesUrl, function(data) {
+                  if (data.Label && data.Label > 0) {
+                    var axis = $('.cut_plane option:selected').text();
+                    self.setState({
+                      'volumeViewer': true,
+                      'click_z': parseInt(z),
+                      'click_y': Math.round(coords.y),
+                      'click_x': Math.round(coords.x),
+                      'click_axis': axis,
+                      'click_label': data.Label
+                    });
+                  }
+                });
+              return;
             }
           });
 
@@ -474,6 +490,10 @@ var TileMapArea = React.createClass({
     };
   },
 
+  sparseCloseHandler: function() {
+    this.setState({volumeViewer: false});
+  },
+
   updateViewerPlane: function (currentSeg) {
     if (typeof currentSeg == 'undefined') {
       currentSeg = this.state.segmentation;
@@ -532,11 +552,16 @@ var TileMapArea = React.createClass({
     var segmentation_active = this.state.segmentation ? 'active' : '';
     var seg_class= "btn btn-default " + segmentation_active;
 
+    var sparse_viewer = '';
+    if (this.state.volumeViewer) {
+      sparse_viewer = <SparseVolViewer uuid={this.props.uuid} x={this.state.click_x} y={this.state.click_y} z={this.state.click_z} axis={this.state.click_axis} label={this.state.click_label} closeHandler={this.sparseCloseHandler} />;
+    }
+
 
     return (
-        <div>
-          <div id="toolbar">
-            <div className="row">
+      <div>
+        <div id="toolbar">
+          <div className="row">
             <form className="form-inline">
               <div className="col-sm-12">
                 <button type="button" className="btn btn-default" id="home">Home</button>
@@ -552,33 +577,34 @@ var TileMapArea = React.createClass({
                 </select>
               </div>
             </form>
-            </div>
-            <div className="row">
-              <div className="col-sm-1" id="stack-input">
-                <input id="depth" type="number" min="0" max="2000" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
-              </div>
-              <div className="col-sm-11" id="slider-container">
-                <input id="stack-slider" min="0" max="2000" type="range" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
-              </div>
-            </div>
-          </div>
-          <div id="viewer" className="openseadragon"></div>
-          <div className="row">
-            <div className="col-sm-12">
-              <form name="coordinates" onSubmit={this.handleCoordinateChange}>
-                <label>x</label>{inputOne}
-                <label>y</label>{inputTwo}
-                <label>z</label>{inputThree}
-                <button type="submit" id="coordinatechange">Go</button>
-              </form>
-            </div>
           </div>
           <div className="row">
-            <div className="col-sm-12">
-            <TileCoordinates width={this.state.x} height={this.state.y} depth={this.state.layer} plane={this.state.plane}/>
+            <div className="col-sm-1" id="stack-input">
+              <input id="depth" type="number" min="0" max="2000" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
+            </div>
+            <div className="col-sm-11" id="slider-container">
+              <input id="stack-slider" min="0" max="2000" type="range" value={this.state.layer} onChange={this.handleZChange} onKeyDown={this.handleZKeyDown} onKeyUp={this.handleZKeyUp}/>
             </div>
           </div>
         </div>
+        {sparse_viewer}
+        <div id="viewer" className="openseadragon"></div>
+        <div className="row">
+          <div className="col-sm-12">
+            <form name="coordinates" onSubmit={this.handleCoordinateChange}>
+              <label>x</label>{inputOne}
+              <label>y</label>{inputTwo}
+              <label>z</label>{inputThree}
+              <button type="submit" id="coordinatechange">Go</button>
+            </form>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-12">
+          <TileCoordinates width={this.state.x} height={this.state.y} depth={this.state.layer} plane={this.state.plane}/>
+          </div>
+        </div>
+      </div>
     );
   }
 });
