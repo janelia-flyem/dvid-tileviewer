@@ -85,10 +85,12 @@ var TileMapArea = React.createClass({
             dz        = maxPoint[2] - minPoint[2];
 
           // set a default level of one unless we actually have tiling information
-          var maxLevel = 4;
+          var maxLevel = config.settings.maxTileLevel;
           if (tileData.Extended && tileData.Extended.Levels) {
             maxLevel = Object.keys(tileData.Extended.Levels).length - 1;
           }
+
+          var minLevel = config.settings.minTileLevel;
 
           // this works out the size of the image based on the number of tiles required
           // to cover the complete image at the largest level.
@@ -147,7 +149,7 @@ var TileMapArea = React.createClass({
               height:    maxDimensions,
               width:     maxDimensions,
               tileSize:  tileSize,
-              minLevel:  0,
+              minLevel:  minLevel,
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice1]-1,
@@ -161,7 +163,7 @@ var TileMapArea = React.createClass({
               height:    maxDimensions,
               width:     maxDimensions,
               tileSize:  tileSize,
-              minLevel:  0,
+              minLevel:  minLevel,
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice2]-1,
@@ -175,7 +177,7 @@ var TileMapArea = React.createClass({
               height:    maxDimensions,
               width:     maxDimensions,
               tileSize:  tileSize,
-              minLevel:  0,
+              minLevel:  minLevel,
               maxLevel:  maxLevel,
               minZ:      0,
               maxZ:      volumeDepth[slice3]-1,
@@ -240,10 +242,12 @@ var TileMapArea = React.createClass({
             navigatorSizeRatio: 0.25,
             wrapHorizontal:     false,
             maxZoomPixelRatio:  1.8,
-            showNavigator:      true,
+            showNavigator:      config.settings.showNavigator,
             tileSources:        viewer.tileSources,
             //zoomPerClick:       1.0,
             toolbar:            "toolbar",
+            minZoomLevel:       config.settings.minZoomLevel,
+            defaultZoomLevel:   config.settings.defaultZoomLevel,
             zoomInButton:       "zoom-in",
             zoomOutButton:      "zoom-out",
             homeButton:         "home",
