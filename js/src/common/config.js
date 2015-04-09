@@ -9,7 +9,9 @@ var settings = {
   // Set the data instance that provides information about the
   // dimensions of the volume. This should be a data instance of
   // type grayscale8.
-  infotype: 'grayscale',
+  infotype:  'grayscale',
+  bodyType:  'bodies', // name of the data instance to serve up the body data
+  labelType: 'bodies', // name of the data instance that serves up label information
   // the layers at which tile will be fetched from the server. For sources that
   // have been tiled, this should be the defaults 0 - inf. For limited gray scale
   // data, this needs to be 4 for both.
