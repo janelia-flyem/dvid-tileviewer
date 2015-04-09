@@ -1,6 +1,6 @@
 //! OpenSeadragon 1.0.0
-//! Built on 2015-03-23
-//! Git commit: v1.0.0-163-ged42d80
+//! Built on 2015-04-09
+//! Git commit: v1.0.0-164-gcb889e0
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -7365,13 +7365,15 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
           THIS[ self.hash ].slicing = false;
           self.viewport.z = Math.min(layer, self.source.maxZ);
           self.viewport.z = Math.max(layer, self.source.minZ);
-          if (self.navigator && self.navigator.drawer && self.navigator.drawer.viewport) {
-            self.navigator.drawer.viewport.z = self.viewport.z;
-          } else {
-            // the navigator window wasn't ready, so try again.
-            self.updateLayer(layer);
+          if (self.navigator) {
+            if (self.navigator.drawer && self.navigator.drawer.viewport) {
+              self.navigator.drawer.viewport.z = self.viewport.z;
+            } else {
+              // the navigator window wasn't ready, so try again.
+              self.updateLayer(layer);
+            }
+            THIS[ self.navigator.hash ].forceRedraw = true;
           }
-          THIS[ self.navigator.hash ].forceRedraw = true;
           THIS[ self.hash ].forceRedraw = true;
         }
       });
