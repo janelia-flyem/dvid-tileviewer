@@ -69,3 +69,11 @@ h1 {
   border: 1px solid #FF0;
   color: #FF0;
 }
+
+.closelink {
+  float:right;
+}
+
+.bodymeta {
+  float: left;
+}

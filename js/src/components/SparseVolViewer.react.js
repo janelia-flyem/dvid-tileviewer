@@ -73,7 +73,8 @@ var SparseVolViewer = React.createClass({
   render: function () {
     return (
       <div id="volume_viewer">
-        <p onClick={this.props.closeHandler}> Close [x]</p>
+        <p className="bodymeta">Body ID: {this.state.label}</p>
+        <p className="closelink" onClick={this.props.closeHandler}> Close [x]</p>
       </div>
     );
   }
