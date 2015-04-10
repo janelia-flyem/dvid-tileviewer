@@ -260,8 +260,6 @@ var TileMapArea = React.createClass({
             defaultZoomLevel = 6;
           }
 
-          console.log([minZoomLevel, defaultZoomLevel]);
-
           viewer.xy = OpenSeadragon({
             // need to be able to pass in the react state, so that we can modify it
             // when using the other buttons to change z layer.
