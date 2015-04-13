@@ -17,7 +17,6 @@ var Home = React.createClass({
       if (this.isMounted()) {
         var repolist = [];
         for (var repo in repos) {
-          console.log(repos);
           if (repos.hasOwnProperty(repo)) {
             repolist.push({key: repo, uuid: repo, alias: repos[repo].Alias, desc: repos[repo].Description, dag: repos[repo].DAG});
           }
@@ -51,13 +50,30 @@ var ItemWrapper = React.createClass({
   },
 
   render: function() {
-    console.log(this.state);
+    //console.log(this.props.data.dag);
+    var nodes = [];
+    for (var node in this.props.data.dag.Nodes) {
+      nodes.push(this.props.data.dag.Nodes[node]);
+    }
+
     return (
       <li>
-        <Link to="dataselection" params={{uuid: this.props.data.uuid}}>{this.props.data.alias ? this.props.data.alias : 'Unnamed Repo' }</Link> - {this.props.data.desc ? this.props.data.desc : 'no description'}
-        <p className="subtle" onClick={this.handleClick}>{this.props.data.uuid}</p>
-        <p className={ this.state.visible ? 'show' : 'hidden'}>DAG</p>
+        <p onClick={this.handleClick}>{this.props.data.alias ? this.props.data.alias : 'Unnamed Repo' } - {this.props.data.desc ? this.props.data.desc : 'no description'}</p>
+        <div className={ this.state.visible ? 'show' : 'hidden'}>
+          {nodes.map(function(node) {
+            return <NodeWrapper data={node} key={node.UUID}/>;
+          })}
+        </div>
       </li>
+    );
+  }
+});
+
+
+var NodeWrapper = React.createClass({
+  render: function () {
+    return (
+      <p><Link to="dataselection" params={{uuid: this.props.data.UUID}}>{this.props.data.UUID}</Link> ({this.props.data.VersionID}) - {this.props.data.Note}</p>
     );
   }
 });
