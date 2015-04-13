@@ -6,6 +6,7 @@ var React       = require('react'),
   Link          = Router.Link,
   RouteHandler  = Router.RouteHandler,
   TileMap       = require('./TileMap.react'),
+  DataSelection = require('./DataSelection.react'),
   Home          = require('./Home.react'),
   NotFound      = require('./NotFound.react'),
   Nav           = require('./Navigation.react');
@@ -29,6 +30,7 @@ var routes = (
   <Route name="tileviewerapp" path="/" handler={TileViewerApp}>
     <Route name="tilemap" path="uuid/:uuid" handler={TileMap}/>
     <Route name="tilemapwithcoords" path="uuid/:uuid/:plane/:coordinates" handler={TileMap}/>
+    <Route name="dataselection" path=":uuid" handler={DataSelection}/>
     <DefaultRoute handler={Home}/>
     <NotFoundRoute handler={NotFound}/>
   </Route>

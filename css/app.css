@@ -77,3 +77,7 @@ h1 {
 .bodymeta {
   float: left;
 }
+
+.datainstances td, .datainstances th {
+  padding: 0.3em 1em;
+}

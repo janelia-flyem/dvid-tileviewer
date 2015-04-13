@@ -1,6 +1,7 @@
 var React = require('react'),
   Router = require('react-router'),
   TileMapArea = require('./TileMapArea.react'),
+  DataInstances = require('./DataInstances.react'),
   config = require('../common/config');
 
 var TileMap = React.createClass({
@@ -73,35 +74,3 @@ var dateString = function (unformatted) {
   var date = new Date(unformatted);
   return date.toString();
 }
-
-var DataInstances = React.createClass({
-  render: function() {
-    var rows = [];
-
-    if (this.props && this.props.instances) {
-      var instances = this.props.instances;
-      for (var key in instances) {
-        if (instances.hasOwnProperty(key)) {
-          var instance = instances[key];
-          rows.push(<DataInstance key={key} uuid={this.props.uuid} name={instance.Base.Name} type={instance.Base.TypeName} versioned={instance.Base.Versioned}/>);
-        }
-      }
-    }
-
-    return (
-      <ul>
-      {rows}
-      </ul>
-    );
-  }
-});
-
-var DataInstance = React.createClass({
-  render: function () {
-    var url = config.datatypeInfoUrl(this.props.uuid, this.props.name);
-    return (
-      <li><a href={url}>{this.props.name}</a> <span className="label label-danger">{this.props.type}</span> <span className="label label-success">{this.props.versioned ? 'versioned' : 'unversioned'}</span></li>
-    );
-  }
-});
-
