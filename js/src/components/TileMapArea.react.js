@@ -13,6 +13,7 @@ var React  = require('react'),
   img_helper = null;
 
 var TileMapArea = React.createClass({
+  mixins: [ Router.Navigation ],
 
   getInitialState: function() {
     return {
@@ -304,7 +305,15 @@ var TileMapArea = React.createClass({
               y = Math.round(img_helper.logicalToDataY(center.y)),
               tileSourceMapping = ['xy','xz','yz'];
             self.setState({'x': x, 'y': y});
-            updateUrl(uuid, tileSourceMapping[self.state.plane], x, y, self.state.layer);
+            var url_plane =  tileSourceMapping[self.state.plane] || 'xy';
+
+            self.replaceWith('tilemapwithcoords',{
+              uuid: uuid,
+              plane: url_plane,
+              coordinates: x +'_' + y + '_' + self.state.layer,
+              tileSource: self.props.tileSource,
+              labelSource: self.props.labelSource
+            });
           });
 
           viewer.xy.addHandler('canvas-click', function(event) {
@@ -453,7 +462,13 @@ var TileMapArea = React.createClass({
       var tileSourceMapping = ['xy','xz','yz'];
       var plane = tileSourceMapping[this.state.plane];
 
-      updateUrl(uuid, plane, x, y, layer);
+      this.replaceWith('tilemapwithcoords',{
+        uuid: uuid,
+        plane: plane,
+        coordinates: x +'_' + y + '_' + layer,
+        tileSource: this.props.tileSource,
+        labelSource: this.props.labelSource
+      });
     }
   },
 
@@ -640,13 +655,6 @@ var TileMapArea = React.createClass({
 });
 
 module.exports = TileMapArea;
-
-function updateUrl(uuid, plane, x, y, z) {
-  var plane = plane || 'xy';
-  var url = '#/uuid/' + uuid + '/' + plane + '/' + x + '_' + y + '_' + z;
-  history.pushState({},'',url);
-};
-
 
 function convertCoordinates (input) {
   var converted = null;
