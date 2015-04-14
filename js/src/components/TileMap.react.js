@@ -2,6 +2,7 @@ var React = require('react'),
   Router = require('react-router'),
   TileMapArea = require('./TileMapArea.react'),
   DataInstances = require('./DataInstances.react'),
+  RepoHeader = require('./RepoHeader.react'),
   config = require('../common/config');
 
 var TileMap = React.createClass({
@@ -11,6 +12,8 @@ var TileMap = React.createClass({
     return {
       uuid: this.getParams().uuid,
       plane: this.getParams().plane,
+      tileSource: this.getParams().tileSource,
+      labelSource: this.getParams().labelSource,
       coordinateString: this.getParams().coordinates,
       repo: {
         DataInstances: {}
@@ -42,23 +45,9 @@ var TileMap = React.createClass({
   render: function () {
     return (
       <div>
-        <div className="row info-header">
-          <div className="col-sm-6">
-            <h1>{this.state.repo.Alias}</h1>
-            <p>{this.state.repo.Description}</p>
-          </div>
-          <div className="col-sm-6 text-right">
-            <p><b>UUID:</b> {this.state.uuid}</p>
-            <p><b>Created:</b> {dateString(this.state.repo.Created)}</p>
-            <p><b>Updated:</b> {dateString(this.state.repo.Updated)}</p>
-          </div>
-        </div>
+        <RepoHeader repo={this.state.repo} uuid={this.state.uuid}/>
         <div className="row">
-          <div className="col-sm-4">
-            <p>Data Instances</p>
-            <DataInstances instances={this.state.repo.DataInstances} uuid={this.state.uuid}/>
-          </div>
-          <div className="col-sm-8">
+          <div className="col-sm-12">
             <TileMapArea instances={this.state.repo.DataInstances} uuid={this.state.uuid} coordinateString={this.state.coordinateString} plane={this.state.plane}/>
           </div>
         </div>
@@ -68,9 +57,3 @@ var TileMap = React.createClass({
 });
 
 module.exports = TileMap;
-
-
-var dateString = function (unformatted) {
-  var date = new Date(unformatted);
-  return date.toString();
-}

@@ -41,12 +41,12 @@ var DataInstance = React.createClass({
     var tile_input = '';
     var label_input = '';
 
-    if (this.props.type === 'grayscale8' || this.props.type === 'multiscale2d' ) {
-      tile_input = <TileInput/>;
+    if (this.props.type === 'grayscale8' || this.props.type === 'multiscale2d' || this.props.type === 'uint8blk' || this.props.type === 'imagetile' ) {
+      tile_input = <TileInput name={this.props.name}/>;
     }
 
-    if (this.props.type === 'labels64' ) {
-      label_input = <LabelInput/>;
+    if (this.props.type === 'labels64' || this.props.type === 'labelblk') {
+      label_input = <LabelInput name={this.props.name}/>;
     }
 
     return (
@@ -64,7 +64,7 @@ var DataInstance = React.createClass({
 var LabelInput = React.createClass({
   render: function () {
     return (
-      <input type="radio" name="label_source"></input>
+      <input type="radio" name="label_source" value={this.props.name}></input>
     );
   }
 });
@@ -72,7 +72,7 @@ var LabelInput = React.createClass({
 var TileInput = React.createClass({
   render: function () {
     return (
-      <input type="radio" name="tile_source"></input>
+      <input type="radio" name="tile_source" value={this.props.name}></input>
     );
   }
 });
