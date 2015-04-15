@@ -2,7 +2,7 @@ var React  = require('react'),
   Router   = require('react-router'),
   config   = require('../common/config'),
   core     = require('../common/core'),
-  datatype = config.settings.datatype,
+  datatype = null,
   infotype = config.settings.infotype,
   TileCoordinates = require('./TileCoordinates.react'),
   SparseVolViewer = require('./SparseVolViewer.react'),
@@ -57,6 +57,7 @@ var TileMapArea = React.createClass({
       return;
     }
 
+    datatype = this.props.tileSource;
 
     if (props.instances && props.instances.hasOwnProperty(datatype)) {
       var node = this.getDOMNode();
