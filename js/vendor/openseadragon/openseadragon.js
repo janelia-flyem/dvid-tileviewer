@@ -1,6 +1,6 @@
 //! OpenSeadragon 1.0.0
-//! Built on 2015-04-09
-//! Git commit: v1.0.0-164-gcb889e0
+//! Built on 2015-04-15
+//! Git commit: v1.0.0-164-gcb889e0-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -14605,6 +14605,12 @@ function updateViewport( drawer ) {
     while ( drawer.lastDrawn.length > 0 ) {
         tile = drawer.lastDrawn.pop();
         tile.beingDrawn = false;
+    }
+
+    // we dont want to buffer the virtual sources as it causes too much lag
+    // on the client side rendering. 
+    if (drawer.source.virtualMode) {
+      ZRadius = 0;
     }
 
     //TODO
