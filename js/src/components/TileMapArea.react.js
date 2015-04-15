@@ -460,7 +460,7 @@ var TileMapArea = React.createClass({
       var uuid = this.props.uuid;
 
       var tileSourceMapping = ['xy','xz','yz'];
-      var plane = tileSourceMapping[this.state.plane];
+      var plane = tileSourceMapping[this.state.plane] || 'xy';
 
       this.replaceWith('tilemapwithcoords',{
         uuid: uuid,
