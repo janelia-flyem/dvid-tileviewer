@@ -4,6 +4,7 @@ var React  = require('react'),
   core     = require('../common/core'),
   datatype = null,
   infotype = config.settings.infotype,
+  labeltype = null,
   TileCoordinates = require('./TileCoordinates.react'),
   SparseVolViewer = require('./SparseVolViewer.react'),
   slice1    = 'xy',
@@ -58,6 +59,7 @@ var TileMapArea = React.createClass({
     }
 
     datatype = this.props.tileSource;
+    labeltype = this.props.labelSource;
 
     if (props.instances && props.instances.hasOwnProperty(datatype)) {
       var node = this.getDOMNode();
@@ -219,7 +221,7 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice1]-1,
               getTileUrl: function xyTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + config.settings.bodyType + "/raw/0_1_2/512_512_1/" + (x * 512) + "_" + (y * 512) + "_" + z;
+                var api_url = url + "/api/node/" + uuid + "/" + labeltype + "/raw/0_1_2/512_512_1/" + (x * 512) + "_" + (y * 512) + "_" + z;
                 return api_url;
               }
             },
@@ -233,7 +235,7 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice2]-1,
               getTileUrl: function xzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + config.settings.bodyType + "/raw/0_1_2/512_1_512/" + (x * 512) + "_" + z + "_" + (y * 512);
+                var api_url = url + "/api/node/" + uuid + "/" + labeltype + "/raw/0_1_2/512_1_512/" + (x * 512) + "_" + z + "_" + (y * 512);
                 return api_url;
               }
             },
@@ -247,7 +249,7 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + config.settings.bodyType + "/raw/0_1_2/1_512_512/" + z + "_" + (x * 512) + "_" + (y * 512);
+                var api_url = url + "/api/node/" + uuid + "/" + labeltype + "/raw/0_1_2/1_512_512/" + z + "_" + (x * 512) + "_" + (y * 512);
                 return api_url;
               }
             },
