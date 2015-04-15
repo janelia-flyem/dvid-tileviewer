@@ -109,6 +109,13 @@ var TileMapArea = React.createClass({
             maxLevel = 4;
           }
 
+          var tileSize = 512;
+          if (tileData.Extended && tileData.Extended.Levels) {
+            tileSize = tileData.Extended.Levels[0].TileSize[0];
+          }
+
+
+
           // this works out the size of the image based on the number of tiles required
           // to cover the complete image at the largest level.
           //
@@ -128,7 +135,7 @@ var TileMapArea = React.createClass({
           //your offsets I believe.
           //
 
-          var maxDimensions = 512 * Math.pow(2, maxLevel);
+          var maxDimensions = tileSize * Math.pow(2, maxLevel);
 
           var volumeWidth = {
             'xy': dx,
@@ -154,10 +161,6 @@ var TileMapArea = React.createClass({
 
           $('#depth').attr('max', dz);
 
-          var tileSize = 512;
-          if (tileData.Extended && tileData.Extended.Levels) {
-            tileSize = tileData.Extended.Levels[0].TileSize[0];
-          }
 
           viewer = {
             nmPerPixel: 10,
@@ -171,7 +174,7 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice1]-1,
               getTileUrl: function xyTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice1 + "/512_512/" + (x * 512) + "_" + (y * 512) + "_" + z;
+                var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice1 + "/" + tileSize + "_" + tileSize + "/" + (x * tileSize) + "_" + (y * tileSize) + "_" + z;
                 if (dataIsTiled) {
                    api_url = config.tileFetchUrl(uuid, maxLevel - level, slice1, x, y, z);
                 }
@@ -187,7 +190,7 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice2]-1,
               getTileUrl: function xzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice2 + "/512_512/" + (x * 512) + "_" + z + "_" + (y * 512);
+                var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice2 + "/" + tileSize + "_" + tileSize + "/" + (x * tileSize) + "_" + z + "_" + (y * tileSize);
                 if (dataIsTiled) {
                   api_url = config.tileFetchUrl(uuid, maxLevel - level, slice2, x, z, y);
                 }
@@ -203,7 +206,7 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice3 + "/512_512/" + z + "_" + (x * 512) + "_" + (y * 512);
+                var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice3 + "/" + tileSize + "_" + tileSize + "/" + z + "_" + (x * tileSize) + "_" + (y * tileSize);
                 if (dataIsTiled) {
                   api_url = config.tileFetchUrl(uuid, maxLevel - level, slice3, z, x, y);
                 }
@@ -221,7 +224,7 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice1]-1,
               getTileUrl: function xyTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + labeltype + "/raw/0_1_2/512_512_1/" + (x * 512) + "_" + (y * 512) + "_" + z;
+                var api_url = url + "/api/node/" + uuid + "/" + labeltype + "/raw/0_1_2/" + tileSize + "_" + tileSize + "_1/" + (x * tileSize) + "_" + (y * tileSize) + "_" + z;
                 return api_url;
               }
             },
@@ -235,7 +238,7 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice2]-1,
               getTileUrl: function xzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + labeltype + "/raw/0_1_2/512_1_512/" + (x * 512) + "_" + z + "_" + (y * 512);
+                var api_url = url + "/api/node/" + uuid + "/" + labeltype + "/raw/0_1_2/" + tileSize + "_1_" + tileSize + "/" + (x * tileSize) + "_" + z + "_" + (y * tileSize);
                 return api_url;
               }
             },
@@ -249,7 +252,7 @@ var TileMapArea = React.createClass({
               minZ:      0,
               maxZ:      volumeDepth[slice3]-1,
               getTileUrl: function yzTileURL(level, x, y, z) {
-                var api_url = url + "/api/node/" + uuid + "/" + labeltype + "/raw/0_1_2/1_512_512/" + z + "_" + (x * 512) + "_" + (y * 512);
+                var api_url = url + "/api/node/" + uuid + "/" + labeltype + "/raw/0_1_2/1_" + tileSize + "_" + tileSize + "/" + z + "_" + (x * tileSize) + "_" + (y * tileSize);
                 return api_url;
               }
             },
@@ -430,7 +433,7 @@ var TileMapArea = React.createClass({
                       // attempt to place the image in the correct location on the tile map.
                       // this seems to be off by between 50 - 100 pixels. Not production ready.
                       // must be some rounding errors in scale changes whilst zooming.
-                      location: new OpenSeadragon.Rect(img_helper.dataToLogicalX(3400), img_helper.dataToLogicalY(3500), img_helper.dataToLogicalX(512), img_helper.dataToLogicalY(512))
+                      location: new OpenSeadragon.Rect(img_helper.dataToLogicalX(3400), img_helper.dataToLogicalY(3500), img_helper.dataToLogicalX(tileSize), img_helper.dataToLogicalY(tileSize))
                   });
               }
               overlay = !overlay;
