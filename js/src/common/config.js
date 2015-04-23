@@ -1,10 +1,10 @@
 // Set the base url of the DVID server that you are trying to
 // contact.
 var root = 'http://emrecon100.janelia.priv';
+var root = 'http://emdata1.int.janelia.org:8500';
+//var root = 'http://emdata2.int.janelia.org';
 
 var settings = {
-  // infotype is used to fetch information about the size of the volume.
-  infotype:  'grayscale',
   labelType: 'bodies', // name of the data instance that serves up label information
 
   // the layers at which tile will be fetched from the server. For sources that
