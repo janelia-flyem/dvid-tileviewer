@@ -63,7 +63,7 @@ var DataSelection = React.createClass({
         <Messages message={this.state.message}/>
         <button className="btn btn-default" onClick={this.showDataHandler}>Show Data</button>
         <form id="data_selection">
-          <DataInstances instances={this.state.repo.DataInstances} uuid={this.state.repo.uuid}/>
+          <DataInstances instances={this.state.repo.DataInstances} uuid={this.state.uuid}/>
         </form>
       </div>
     );
