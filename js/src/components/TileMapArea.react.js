@@ -93,8 +93,6 @@ var TileMapArea = React.createClass({
         dy        = maxPoint[1] - minPoint[1],
         dz        = maxPoint[2];
 
-        console.log([dx,dy,dz]);
-
         // set a default level of one unless we actually have tiling information
         var maxLevel = config.settings.maxTileLevel;
         if (tileData.Extended && tileData.Extended.Levels) {
