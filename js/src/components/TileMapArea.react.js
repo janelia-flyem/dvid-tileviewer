@@ -176,7 +176,7 @@ var TileMapArea = React.createClass({
               getTileUrl: function xyTileURL(level, x, y, z) {
                 var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice1 + "/" + tileSize + "_" + tileSize + "/" + (x * tileSize) + "_" + (y * tileSize) + "_" + z;
                 if (dataIsTiled) {
-                   api_url = config.tileFetchUrl(uuid, maxLevel - level, slice1, x, y, z);
+                   api_url = url + "/api/node/" + uuid + "/" + datatype + "/tile/" + slice1 + "/" + (maxLevel - level) + "/" + x + "_" + y + "_" + z;
                 }
                 return api_url;
               }
@@ -192,7 +192,7 @@ var TileMapArea = React.createClass({
               getTileUrl: function xzTileURL(level, x, y, z) {
                 var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice2 + "/" + tileSize + "_" + tileSize + "/" + (x * tileSize) + "_" + z + "_" + (y * tileSize);
                 if (dataIsTiled) {
-                  api_url = config.tileFetchUrl(uuid, maxLevel - level, slice2, x, z, y);
+                  api_url = url + "/api/node/" + uuid + "/" + datatype + "/tile/" + slice2 + "/" + (maxLevel - level) + "/" + x + "_" + z + "_" + y;
                 }
                 return api_url;
               }
@@ -208,7 +208,7 @@ var TileMapArea = React.createClass({
               getTileUrl: function yzTileURL(level, x, y, z) {
                 var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice3 + "/" + tileSize + "_" + tileSize + "/" + z + "_" + (x * tileSize) + "_" + (y * tileSize);
                 if (dataIsTiled) {
-                  api_url = config.tileFetchUrl(uuid, maxLevel - level, slice3, z, x, y);
+                  api_url = url + "/api/node/" + uuid + "/" + datatype + "/tile/" + slice3 + "/" + (maxLevel - level) + "/" + z + "_" + x + "_" + y;
                 }
                 return api_url;
               }
