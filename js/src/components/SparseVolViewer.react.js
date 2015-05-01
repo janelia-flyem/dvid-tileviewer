@@ -26,7 +26,29 @@ var SparseVolViewer = React.createClass({
   componentDidMount: function() {
     // set the uuid on initial load as this wont change during the lifetime
     // of this page.
-    this.setState({uuid: this.props.uuid});
+    var update = 0;
+    var new_state = {};
+    // foreach property value
+    for (var key in this.props) {
+       if (this.props.hasOwnProperty(key)) {
+         // if the value is not null, then proceed.
+         if(this.props[key]) {
+           // convert props to state if they are defined and different
+          if(this.props[key] !== this.state[key]) {
+            new_state[key] = this.props[key];
+            update++;
+          }
+        }
+      }
+    }
+
+    // trigger an update to the canvas if any of the properties are different
+    if (update > 0) {
+      this.setState(new_state, function() {
+        init(this.state);
+        animate();
+      });
+    }
   },
 
   componentWillUnmount: function() {
@@ -149,12 +171,12 @@ function compose_scene(plane) {
   add_cut_planes(plane.uuid,scene, plane);
 
   if (label) {
-    add_sparse_blocks(plane.uuid, scene, label, plane);
+    //add_sparse_blocks(plane.uuid, scene, label, plane);
     // adding in the more complete sparse volume really kills the browser
     // this is probably not viable until either memory or cpu requirements
     // can be figured out.
     //
-    //add_sparse(plane.uuid, scene, label, plane);
+    add_sparse(plane.uuid, scene, label, plane);
   }
   add_axis(scene);
 };
@@ -175,7 +197,7 @@ function add_cut_planes(uuid, scene, plane) {
 
 
 function add_sparse(uuid, scene, label, plane, color) {
-  var url = dataSource + '/api/node/' + uuid + '/bodies/sparsevol/' + label;
+  var url = dataSource + '/api/node/' + uuid + '/ms3_150318_fafb_sample_3k_Seg_mao1000_bodies/sparsevol/' + label;
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
@@ -251,7 +273,7 @@ function add_sparse(uuid, scene, label, plane, color) {
 
 
 function add_sparse_blocks(uuid, scene, label, plane, color) {
-  var url = dataSource + '/api/node/' + uuid + '/bodies/sparsevol-coarse/' + label;
+  var url = dataSource + '/api/node/' + uuid + '/ms3_150318_fafb_sample_3k_Seg_mao1000_bodies/sparsevol-coarse/' + label;
   var cube_size = 32; // need to get this from dvid
   var xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
@@ -309,16 +331,16 @@ function cut_plane(plane, uuid) {
 
   var imgSrc = null;
   if (plane.axis === 'yz') {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/grayscale/raw/' + plane.axis + '/' + size + '_' + size + '/'+ Math.round(plane.x) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + (plane.z - (size / 2)) +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/150318_fafb_sample_3k/raw/' + plane.axis + '/' + size + '_' + size + '/'+ Math.round(plane.x) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + (plane.z - (size / 2)) +'/jpg');
 
     // imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
   else if (plane.axis === 'xz') {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/grayscale/raw/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + Math.round(plane.y) + '_' + (plane.z - (size / 2)) +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/150318_fafb_sample_3k/raw/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + Math.round(plane.y) + '_' + (plane.z - (size / 2)) +'/jpg');
     // imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
   else {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/grayscale/raw/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + plane.z +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/150318_fafb_sample_3k/raw/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + plane.z +'/jpg');
     //imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
 

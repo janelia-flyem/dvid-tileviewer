@@ -1,11 +1,9 @@
 // Set the base url of the DVID server that you are trying to
 // contact.
-var root = 'http://emrecon100.janelia.priv';
-var root = 'http://emdata1.int.janelia.org:8500';
-//var root = 'http://emdata2.int.janelia.org';
+var root = 'http://tem-dvid.int.janelia.org';
 
 var settings = {
-  labelType: 'bodies', // name of the data instance that serves up label information
+  labelType: 'ms3_150318_fafb_sample_3k_Seg_mao1000', // name of the data instance that serves up label information
 
   // the layers at which tile will be fetched from the server. For sources that
   // have been tiled, this should be the defaults 0 - inf. For limited gray scale
