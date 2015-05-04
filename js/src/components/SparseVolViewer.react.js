@@ -7,6 +7,9 @@ var React    = require('react'),
  // variables for THREE
  var camera, scene, renderer;
 
+ // used to store the sparse blocks handle, so we can remove it if needed
+ var blocks;
+
  // allow images to be loaded from other domains.
  THREE.ImageUtils.crossOrigin = '';
 
@@ -16,6 +19,8 @@ var SparseVolViewer = React.createClass({
     return {
       'uuid': null,
       'label': null,
+      'labelType': null,
+      'bodies': null,
       'x': 0,
       'y': 0,
       'z': 0,
@@ -24,6 +29,7 @@ var SparseVolViewer = React.createClass({
   },
 
   componentDidMount: function() {
+    var self = this;
     // set the uuid on initial load as this wont change during the lifetime
     // of this page.
     var update = 0;
@@ -42,13 +48,16 @@ var SparseVolViewer = React.createClass({
       }
     }
 
-    // trigger an update to the canvas if any of the properties are different
-    if (update > 0) {
-      this.setState(new_state, function() {
-        init(this.state);
-        animate();
-      });
-    }
+    $.get(config.datatypeInfoUrl(this.props.uuid, this.props.labelType), function(labelInfo) {
+      new_state['bodies'] = labelInfo.Base.Syncs[0];
+      // trigger an update to the canvas if any of the properties are different
+      if (update > 0) {
+        self.setState(new_state, function() {
+          init(self.state);
+          animate();
+        });
+      }
+    });
   },
 
   componentWillUnmount: function() {
@@ -63,6 +72,10 @@ var SparseVolViewer = React.createClass({
   componentWillReceiveProps: function (props) {
     var update = 0;
     var new_state = {};
+
+    if (!this.state.bodies) {
+      return;
+    }
 
     // foreach property value
     for (var key in props) {
@@ -171,7 +184,7 @@ function compose_scene(plane) {
   add_cut_planes(plane.uuid,scene, plane);
 
   if (label) {
-    //add_sparse_blocks(plane.uuid, scene, label, plane);
+    add_sparse_blocks(plane.uuid, scene, label, plane);
     // adding in the more complete sparse volume really kills the browser
     // this is probably not viable until either memory or cpu requirements
     // can be figured out.
@@ -197,7 +210,7 @@ function add_cut_planes(uuid, scene, plane) {
 
 
 function add_sparse(uuid, scene, label, plane, color) {
-  var url = dataSource + '/api/node/' + uuid + '/ms3_150318_fafb_sample_3k_Seg_mao1000_bodies/sparsevol/' + label;
+  var url = dataSource + '/api/node/' + uuid + '/' + plane.bodies + '/sparsevol/' + label;
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
@@ -264,7 +277,7 @@ function add_sparse(uuid, scene, label, plane, color) {
     particleSystem.translateZ(-plane.z);
 
     scene.add( particleSystem );
-    scene.remove(group);
+    scene.remove(blocks);
 
   };
   xhr.send();
@@ -273,7 +286,7 @@ function add_sparse(uuid, scene, label, plane, color) {
 
 
 function add_sparse_blocks(uuid, scene, label, plane, color) {
-  var url = dataSource + '/api/node/' + uuid + '/ms3_150318_fafb_sample_3k_Seg_mao1000_bodies/sparsevol-coarse/' + label;
+  var url = dataSource + '/api/node/' + uuid + '/' + plane.bodies + '/sparsevol-coarse/' + label;
   var cube_size = 32; // need to get this from dvid
   var xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
@@ -317,6 +330,7 @@ function add_sparse_blocks(uuid, scene, label, plane, color) {
 
     scene.add(group);
 
+    blocks = group;
 
   };
   xhr.send();
@@ -331,16 +345,16 @@ function cut_plane(plane, uuid) {
 
   var imgSrc = null;
   if (plane.axis === 'yz') {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/150318_fafb_sample_3k/raw/' + plane.axis + '/' + size + '_' + size + '/'+ Math.round(plane.x) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + (plane.z - (size / 2)) +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/raw/' + plane.axis + '/' + size + '_' + size + '/'+ Math.round(plane.x) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + (plane.z - (size / 2)) +'/jpg');
 
     // imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
   else if (plane.axis === 'xz') {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/150318_fafb_sample_3k/raw/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + Math.round(plane.y) + '_' + (plane.z - (size / 2)) +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/raw/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + Math.round(plane.y) + '_' + (plane.z - (size / 2)) +'/jpg');
     // imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
   else {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/150318_fafb_sample_3k/raw/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + plane.z +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/raw/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + plane.z +'/jpg');
     //imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
 

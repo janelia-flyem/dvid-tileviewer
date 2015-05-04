@@ -2,7 +2,7 @@ var React  = require('react'),
   Router   = require('react-router'),
   config   = require('../common/config'),
   core     = require('../common/core'),
-  datatype = null,
+  tileSource = null,
   labeltype = null,
   TileCoordinates = require('./TileCoordinates.react'),
   SparseVolViewer = require('./SparseVolViewer.react'),
@@ -57,10 +57,10 @@ var TileMapArea = React.createClass({
       return;
     }
 
-    datatype = this.props.tileSource;
+    tileSource  = this.props.tileSource;
     labeltype = this.props.labelSource;
 
-    if (props.instances && props.instances.hasOwnProperty(datatype)) {
+    if (props.instances && props.instances.hasOwnProperty(tileSource)) {
       var node = this.getDOMNode();
       var uuid = this.props.uuid;
       config.uuid = uuid;
@@ -174,9 +174,9 @@ var TileMapArea = React.createClass({
             minZ:      0,
             maxZ:      volumeDepth[slice1]-1,
             getTileUrl: function xyTileURL(level, x, y, z) {
-              var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice1 + "/" + tileSize + "_" + tileSize + "/" + (x * tileSize) + "_" + (y * tileSize) + "_" + z;
+              var api_url = url + "/api/node/" + uuid + "/" + tileSource + "/raw/" + slice1 + "/" + tileSize + "_" + tileSize + "/" + (x * tileSize) + "_" + (y * tileSize) + "_" + z;
               if (dataIsTiled) {
-                  api_url = url + "/api/node/" + uuid + "/" + datatype + "/tile/" + slice1 + "/" + (maxLevel - level) + "/" + x + "_" + y + "_" + z;
+                  api_url = url + "/api/node/" + uuid + "/" + tileSource + "/tile/" + slice1 + "/" + (maxLevel - level) + "/" + x + "_" + y + "_" + z;
               }
               return api_url;
             }
@@ -190,9 +190,9 @@ var TileMapArea = React.createClass({
             minZ:      0,
             maxZ:      volumeDepth[slice2]-1,
             getTileUrl: function xzTileURL(level, x, y, z) {
-              var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice2 + "/" + tileSize + "_" + tileSize + "/" + (x * tileSize) + "_" + z + "_" + (y * tileSize);
+              var api_url = url + "/api/node/" + uuid + "/" + tileSource + "/raw/" + slice2 + "/" + tileSize + "_" + tileSize + "/" + (x * tileSize) + "_" + z + "_" + (y * tileSize);
               if (dataIsTiled) {
-                api_url = url + "/api/node/" + uuid + "/" + datatype + "/tile/" + slice2 + "/" + (maxLevel - level) + "/" + x + "_" + z + "_" + y;
+                api_url = url + "/api/node/" + uuid + "/" + tileSource + "/tile/" + slice2 + "/" + (maxLevel - level) + "/" + x + "_" + z + "_" + y;
               }
               return api_url;
             }
@@ -206,9 +206,9 @@ var TileMapArea = React.createClass({
             minZ:      0,
             maxZ:      volumeDepth[slice3]-1,
             getTileUrl: function yzTileURL(level, x, y, z) {
-              var api_url = url + "/api/node/" + uuid + "/" + datatype + "/raw/" + slice3 + "/" + tileSize + "_" + tileSize + "/" + z + "_" + (x * tileSize) + "_" + (y * tileSize);
+              var api_url = url + "/api/node/" + uuid + "/" + tileSource + "/raw/" + slice3 + "/" + tileSize + "_" + tileSize + "/" + z + "_" + (x * tileSize) + "_" + (y * tileSize);
               if (dataIsTiled) {
-                api_url = url + "/api/node/" + uuid + "/" + datatype + "/tile/" + slice3 + "/" + (maxLevel - level) + "/" + z + "_" + x + "_" + y;
+                api_url = url + "/api/node/" + uuid + "/" + tileSource + "/tile/" + slice3 + "/" + (maxLevel - level) + "/" + z + "_" + x + "_" + y;
               }
               return api_url;
             }
@@ -329,7 +329,7 @@ var TileMapArea = React.createClass({
             // run an ajax request to see if there is a body at the clicked coordinates
             var coords = img_helper.physicalToDataPoint(event.position);
             var z = Math.round($('#depth').val());
-            var bodiesUrl = url + '/api/node/' + uuid + '/' + config.settings.labelType + '/label/' + Math.round(coords.x) + '_' + Math.round(coords.y) + '_' + z;
+            var bodiesUrl = url + '/api/node/' + uuid + '/' + labeltype + '/label/' + Math.round(coords.x) + '_' + Math.round(coords.y) + '_' + z;
               $.getJSON(bodiesUrl, function(data) {
                 if (data.Label && data.Label > 0) {
                   var axis = $('.cut_plane option:selected').text();
@@ -418,12 +418,11 @@ var TileMapArea = React.createClass({
 
       }
 
-      $.get(config.datatypeInfoUrl(uuid, datatype), function (tileData) {
+      $.get(config.datatypeInfoUrl(uuid, tileSource), function (tileData) {
 
         var gScaleData = tileData;
 
         if (dataIsTiled) {
-          console.log('tiled data fetch');
           var source = tileData.Extended.Source;
           $.get(config.datatypeInfoUrl(uuid, source), function(infoData) {
             gScaleData = infoData;
@@ -570,7 +569,7 @@ var TileMapArea = React.createClass({
 
   render: function() {
 
-    if (!this.props.instances || !this.props.instances.hasOwnProperty(datatype) ) {
+    if (!this.props.instances || !this.props.instances.hasOwnProperty(tileSource) ) {
       return (
         <div className="data-missing">
           <h3>Tile data not available</h3>
@@ -602,7 +601,7 @@ var TileMapArea = React.createClass({
 
     var sparse_viewer = '';
     if (this.state.volumeViewer) {
-      sparse_viewer = <SparseVolViewer uuid={this.props.uuid} x={this.state.click_x} y={this.state.click_y} z={this.state.click_z} axis={this.state.click_axis} label={this.state.click_label} closeHandler={this.sparseCloseHandler} />;
+      sparse_viewer = <SparseVolViewer uuid={this.props.uuid} x={this.state.click_x} y={this.state.click_y} z={this.state.click_z} axis={this.state.click_axis} label={this.state.click_label} closeHandler={this.sparseCloseHandler} labelType={this.props.labelSource} tileSource={this.props.tileSource} />;
     }
 
 
