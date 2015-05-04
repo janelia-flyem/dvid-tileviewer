@@ -68,9 +68,13 @@ var TileMapArea = React.createClass({
       var url = config.baseUrl();
       var startingTileSource = 0;
 
+      var tileSources = {
+        "multiscale2d": 1,
+        "imagetile": 1
+      };
 
       //check if we are using tiles or grayscale
-      if (props.instances[datatype].Base.TypeName === "multiscale2d") {
+      if (tileSources.hasOwnProperty(props.instances[tileSource].Base.TypeName)) {
         dataIsTiled = true;
       }
 
