@@ -293,7 +293,7 @@ var TileMapArea = React.createClass({
           //gestureSettingsMouse: {
           //  clickToZoom: false
           //},
-          debugMode:          true
+          debugMode:          false
         });
         viewer.xy.scalebar({
           pixelsPerMeter: 1000000000/viewer.nmPerPixel,
