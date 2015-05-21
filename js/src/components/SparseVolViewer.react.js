@@ -24,7 +24,8 @@ var SparseVolViewer = React.createClass({
       'x': 0,
       'y': 0,
       'z': 0,
-      'axis': 'xy'
+      'axis': 'xy',
+      'voxRatio': 1
     };
   },
 
@@ -49,6 +50,12 @@ var SparseVolViewer = React.createClass({
     }
 
     $.get(config.datatypeInfoUrl(this.props.uuid, this.props.labelType), function(labelInfo) {
+
+      // set the ratio we need to scale the z-axis so that it matches the dimensions of the xy plane.
+      // typically this will be a ratio of one for iostropic data, but will be larger when the z
+      // dimension has been stretched.
+      new_state['voxRatio'] = labelInfo.Extended.VoxelSize[2] / labelInfo.Extended.VoxelSize[0];
+
       new_state['bodies'] = labelInfo.Base.Syncs[0];
       // trigger an update to the canvas if any of the properties are different
       if (update > 0) {
@@ -232,34 +239,45 @@ function add_sparse(uuid, scene, label, plane, color) {
       points += span;
     }
 
-    var positions = new Float32Array(spans * 3);
-    var colors    = new Float32Array(spans * 3);
+    var positions = new Float32Array(spans * 3 * 2); //*2 to capture two points per span (startx,endx)
+    var colors    = new Float32Array(spans * 3 * 2);
     var color     = new THREE.Color();
 
-
     // loop over the spans and work out the dimensions
+    var counter = 0; //so we can add two points per span
     for (var i = 0; i < spans; i++) {
       var offset = i * 4;
       var x = (responseArray[offset + 3]);
       var y = (responseArray[offset + 4]);
-      var z = (responseArray[offset + 5]);
+      var z = responseArray[offset + 5]; //Original Z from server
+      //Modify z to handle anisotropic data (stretching)
+      z = Math.round( (z - plane.z) * plane.voxRatio ) + plane.z;
       var span = responseArray[offset + 6];
 
       // this is where we would add all the additional points if we
       // wanted to fill in the RLE gaps.
-      for (j = 0; j < span; j++) {
+      //for (j = 0; j < span; j++) {
         // do some work
-      }
+      //}
 
+      positions[counter * 3] = x;
+      positions[(counter * 3) + 1] = y;
+      positions[(counter * 3) + 2] = z;
 
-      positions[i * 3] = x;
-      positions[(i * 3) + 1] = y;
-      positions[(i * 3) + 2] = z;
+      colors[counter * 3] = 255;
+      colors[(counter * 3) + 1] = 255;
+      colors[(counter * 3) + 2] = 0;
+      counter++;
 
-      colors[i * 3] = 255;
-      colors[(i * 3) + 1] = 255;
-      colors[(i * 3) + 2] = 0;
+      //Add in an endpoint for each point
+      positions[counter * 3] = x + span;
+      positions[(counter * 3) + 1] = y;
+      positions[(counter * 3) + 2] = z;
 
+      colors[counter * 3] = 255;
+      colors[(counter * 3) + 1] = 255;
+      colors[(counter * 3) + 2] = 0;
+      counter++;
     }
 
     geometry.addAttribute( 'position', new  THREE.BufferAttribute( positions, 3 ) );
@@ -268,9 +286,7 @@ function add_sparse(uuid, scene, label, plane, color) {
     geometry.computeBoundingSphere();
 
     var material = new THREE.PointCloudMaterial( { size: 2, vertexColors: THREE.VertexColors } );
-
     particleSystem = new THREE.PointCloud( geometry, material );
-
 
     particleSystem.translateX(-plane.x);
     particleSystem.translateY(-plane.y);
@@ -345,16 +361,16 @@ function cut_plane(plane, uuid) {
 
   var imgSrc = null;
   if (plane.axis === 'yz') {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/raw/' + plane.axis + '/' + size + '_' + size + '/'+ Math.round(plane.x) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + (plane.z - (size / 2)) +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/isotropic/' + plane.axis + '/' + size + '_' + size + '/'+ Math.round(plane.x) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + (plane.z - Math.round( ( size / plane.voxRatio ) / 2) ) +'/jpg');
 
     // imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
   else if (plane.axis === 'xz') {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/raw/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + Math.round(plane.y) + '_' + (plane.z - (size / 2)) +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/isotropic/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + Math.round(plane.y) + '_' + (plane.z - Math.round( ( size / plane.voxRatio ) / 2) ) +'/jpg');
     // imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
   else {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/raw/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + plane.z +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/isotropic/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + plane.z +'/jpg');
     //imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
 
