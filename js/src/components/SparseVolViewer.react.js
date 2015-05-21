@@ -361,12 +361,12 @@ function cut_plane(plane, uuid) {
 
   var imgSrc = null;
   if (plane.axis === 'yz') {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/isotropic/' + plane.axis + '/' + size + '_' + size + '/'+ Math.round(plane.x) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + (plane.z - Math.round((size/8.75) / 2)) +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/isotropic/' + plane.axis + '/' + size + '_' + size + '/'+ Math.round(plane.x) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + (plane.z - Math.round( ( size / plane.voxRatio ) / 2) ) +'/jpg');
 
     // imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
   else if (plane.axis === 'xz') {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/isotropic/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + Math.round(plane.y) + '_' + (plane.z - Math.round((size/8.75) / 2)) +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/isotropic/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + Math.round(plane.y) + '_' + (plane.z - Math.round( ( size / plane.voxRatio ) / 2) ) +'/jpg');
     // imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
   else {
