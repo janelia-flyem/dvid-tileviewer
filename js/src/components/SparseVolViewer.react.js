@@ -24,7 +24,8 @@ var SparseVolViewer = React.createClass({
       'x': 0,
       'y': 0,
       'z': 0,
-      'axis': 'xy'
+      'axis': 'xy',
+      'voxRatio': 1
     };
   },
 
@@ -49,6 +50,12 @@ var SparseVolViewer = React.createClass({
     }
 
     $.get(config.datatypeInfoUrl(this.props.uuid, this.props.labelType), function(labelInfo) {
+
+      // set the ratio we need to scale the z-axis so that it matches the dimensions of the xy plane.
+      // typically this will be a ratio of one for iostropic data, but will be larger when the z
+      // dimension has been stretched.
+      new_state['voxRatio'] = labelInfo.Extended.VoxelSize[2] / labelInfo.Extended.VoxelSize[0];
+
       new_state['bodies'] = labelInfo.Base.Syncs[0];
       // trigger an update to the canvas if any of the properties are different
       if (update > 0) {
@@ -236,7 +243,6 @@ function add_sparse(uuid, scene, label, plane, color) {
     var colors    = new Float32Array(spans * 3 * 2);
     var color     = new THREE.Color();
 
-
     // loop over the spans and work out the dimensions
     var counter = 0; //so we can add two points per span
     for (var i = 0; i < spans; i++) {
@@ -245,9 +251,9 @@ function add_sparse(uuid, scene, label, plane, color) {
       var y = (responseArray[offset + 4]);
       var z = responseArray[offset + 5]; //Original Z from server
       //Modify z to handle anisotropic data (stretching)
-      z = Math.round((z-plane.z)*8.75) + plane.z;
+      z = Math.round( (z - plane.z) * plane.voxRatio ) + plane.z;
       var span = responseArray[offset + 6];
-      
+
       // this is where we would add all the additional points if we
       // wanted to fill in the RLE gaps.
       //for (j = 0; j < span; j++) {
@@ -281,7 +287,7 @@ function add_sparse(uuid, scene, label, plane, color) {
 
     var material = new THREE.PointCloudMaterial( { size: 2, vertexColors: THREE.VertexColors } );
     particleSystem = new THREE.PointCloud( geometry, material );
-    
+
     particleSystem.translateX(-plane.x);
     particleSystem.translateY(-plane.y);
     particleSystem.translateZ(-plane.z);
