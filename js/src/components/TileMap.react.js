@@ -31,14 +31,18 @@ var TileMap = React.createClass({
   },
 
   componentDidMount: function () {
-    this.props.dvid.get(this.state.uuid, 'info', {}, function(result) {
-      var repo = result;
-      if (this.isMounted()) {
-        this.setState({
-          repo: repo
-        });
-      }
-    }.bind(this));
+    this.props.dvid.get({
+      uuid: this.state.uuid,
+      endpoint: 'info',
+      callback: function(result) {
+        var repo = result;
+        if (this.isMounted()) {
+          this.setState({
+            repo: repo
+          });
+        }
+      }.bind(this)
+    });
   },
 
 

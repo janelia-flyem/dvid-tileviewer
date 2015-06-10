@@ -19,14 +19,18 @@ var DataSelection = React.createClass({
 
   componentDidMount: function () {
     var self = this;
-    this.props.dvid.get(this.state.uuid, 'info', {}, function(result) {
-      var repo = result;
-      if (self.isMounted()) {
-        self.setState({
-          repo: repo
-        });
-      }
-    }.bind(this));
+    this.props.dvid.get({
+      uuid: this.state.uuid,
+      endpoint: 'info',
+      callback: function(result) {
+        var repo = result;
+        if (self.isMounted()) {
+          self.setState({
+            repo: repo
+          });
+        }
+      }.bind(this)
+    });
   },
 
   showDataHandler: function(event) {

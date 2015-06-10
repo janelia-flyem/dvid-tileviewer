@@ -422,23 +422,28 @@ var TileMapArea = React.createClass({
 
       }
 
-      this.props.dvid.node(uuid, tileSource + '/info', {}, function (tileData) {
+      this.props.dvid.node({
+        uuid: uuid,
+        endpoint: tileSource + '/info',
+        callback: function (tileData) {
 
-        var gScaleData = tileData;
+          var gScaleData = tileData;
 
-        if (dataIsTiled) {
-          var source = tileData.Extended.Source;
-          this.props.dvid.node(uuid, source + '/info', {}, function(infoData) {
-            gScaleData = infoData;
+          if (dataIsTiled) {
+            var source = tileData.Extended.Source;
+            this.props.dvid.node({
+              uuid: uuid,
+              endpoint: source + '/info',
+              callback: function(infoData) {
+                gScaleData = infoData;
+                createTileViewer(gScaleData, tileData);
+              }
+            });
+          }
+          else {
             createTileViewer(gScaleData, tileData);
-          });
+          }
         }
-        else {
-          createTileViewer(gScaleData, tileData);
-        }
-
-
-
       });
     }
   },

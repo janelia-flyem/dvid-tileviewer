@@ -49,20 +49,23 @@ var SparseVolViewer = React.createClass({
       }
     }
 
-    this.props.dvid.node(this.props.uuid, this.props.labelType + '/info', {}, function(labelInfo) {
+    this.props.dvid.node({
+      uuid: this.props.uuid,
+      endpoint: this.props.labelType + '/info',
+      callback: function(labelInfo) {
+        // set the ratio we need to scale the z-axis so that it matches the dimensions of the xy plane.
+        // typically this will be a ratio of one for iostropic data, but will be larger when the z
+        // dimension has been stretched.
+        new_state['voxRatio'] = labelInfo.Extended.VoxelSize[2] / labelInfo.Extended.VoxelSize[0];
 
-      // set the ratio we need to scale the z-axis so that it matches the dimensions of the xy plane.
-      // typically this will be a ratio of one for iostropic data, but will be larger when the z
-      // dimension has been stretched.
-      new_state['voxRatio'] = labelInfo.Extended.VoxelSize[2] / labelInfo.Extended.VoxelSize[0];
-
-      new_state['bodies'] = labelInfo.Base.Syncs[0];
-      // trigger an update to the canvas if any of the properties are different
-      if (update > 0) {
-        self.setState(new_state, function() {
-          init(self.state);
-          animate();
-        });
+        new_state['bodies'] = labelInfo.Base.Syncs[0];
+        // trigger an update to the canvas if any of the properties are different
+        if (update > 0) {
+          self.setState(new_state, function() {
+            init(self.state);
+            animate();
+          });
+        }
       }
     });
   },
@@ -218,6 +221,8 @@ function add_cut_planes(uuid, scene, plane) {
 
 function add_sparse(uuid, scene, label, plane, color) {
   var url = dataSource + '/api/node/' + uuid + '/' + plane.bodies + '/sparsevol/' + label;
+
+
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
