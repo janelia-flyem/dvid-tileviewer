@@ -62,7 +62,7 @@ var SparseVolViewer = React.createClass({
         // trigger an update to the canvas if any of the properties are different
         if (update > 0) {
           self.setState(new_state, function() {
-            init(self.state);
+            init(self.state, self.props);
             animate();
           });
         }
@@ -104,7 +104,7 @@ var SparseVolViewer = React.createClass({
     // trigger an update to the canvas if any of the properties are different
     if (update > 0) {
       this.setState(new_state, function() {
-        init(this.state);
+        init(this.state, props);
         animate();
       });
     }
@@ -128,7 +128,7 @@ var SparseVolViewer = React.createClass({
 
 module.exports = SparseVolViewer;
 
-function init(state) {
+function init(state, props) {
   renderer = new THREE.WebGLRenderer();
   renderer.setClearColor( 0x000000 );
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -168,7 +168,7 @@ function init(state) {
   }
 
 
-  compose_scene(plane);
+  compose_scene(plane, props);
 
 
   // lastly setup the controls.
@@ -181,7 +181,7 @@ function animate() {
   renderer.render( scene, camera );
 }
 
-function compose_scene(plane) {
+function compose_scene(plane, props) {
   var side = new THREE.MeshBasicMaterial({
     color: 0x00ffff,
     side: THREE.DoubleSide,
@@ -191,7 +191,7 @@ function compose_scene(plane) {
   // grab the data from DVID at this point.
   var label = plane.label;
 
-  add_cut_planes(plane.uuid,scene, plane);
+  add_cut_planes(plane.uuid,scene, plane, props);
 
   if (label) {
     add_sparse_blocks(plane.uuid, scene, label, plane);
@@ -204,14 +204,14 @@ function compose_scene(plane) {
   add_axis(scene);
 };
 
-function add_cut_planes(uuid, scene, plane) {
+function add_cut_planes(uuid, scene, plane, props) {
   var cross_cut = new THREE.Object3D();
   plane.axis = 'xy';
-  cross_cut.add(cut_plane(plane, uuid));
+  cross_cut.add(cut_plane(plane, uuid, props));
   plane.axis = 'yz';
-  cross_cut.add(cut_plane(plane, uuid));
+  cross_cut.add(cut_plane(plane, uuid, props));
   plane.axis = 'xz';
-  cross_cut.add(cut_plane(plane, uuid));
+  cross_cut.add(cut_plane(plane, uuid, props));
   cross_cut.translateX(-plane.x);
   cross_cut.translateY(-plane.y);
   cross_cut.translateZ(-plane.z);
@@ -361,21 +361,45 @@ function add_sparse_blocks(uuid, scene, label, plane, color) {
 
 // Create the cut plane to show context from the original
 // 2D image location
-function cut_plane(plane, uuid) {
+function cut_plane(plane, uuid, props) {
   var size = 512;
 
   var imgSrc = null;
   if (plane.axis === 'yz') {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/isotropic/' + plane.axis + '/' + size + '_' + size + '/'+ Math.round(plane.x) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + (plane.z - Math.round( ( size / plane.voxRatio ) / 2) ) +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(props.dvid.isoImageUrl({
+      uuid: uuid,
+      tileSource: plane.tileSource,
+      axis: plane.axis,
+      size: size,
+      x: Math.round(plane.x),
+      y: Math.round(plane.y) - (size / 2),
+      z: plane.z - Math.round( ( size / plane.voxRatio ) / 2)
+    }));
 
     // imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
   else if (plane.axis === 'xz') {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/isotropic/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + Math.round(plane.y) + '_' + (plane.z - Math.round( ( size / plane.voxRatio ) / 2) ) +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(props.dvid.isoImageUrl({
+      uuid: uuid,
+      tileSource: plane.tileSource,
+      axis: plane.axis,
+      size: size,
+      x: Math.round(plane.x) - (size / 2),
+      y: Math.round(plane.y),
+      z: plane.z - Math.round( ( size / plane.voxRatio ) / 2)
+    }));
     // imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
   else {
-    imgSrc = THREE.ImageUtils.loadTexture(dataSource + '/api/node/' + uuid + '/' + plane.tileSource + '/isotropic/' + plane.axis + '/' + size + '_' + size + '/'+ (Math.round(plane.x) - (size / 2)) + '_' + (Math.round(plane.y) - (size / 2)) + '_' + plane.z +'/jpg');
+    imgSrc = THREE.ImageUtils.loadTexture(props.dvid.isoImageUrl({
+      uuid: uuid,
+      tileSource: plane.tileSource,
+      axis: plane.axis,
+      size: size,
+      x: Math.round(plane.x) - (size / 2),
+      y: Math.round(plane.y) - (size / 2),
+      z: plane.z
+    }));
     //imgSrc = THREE.ImageUtils.loadTexture('http://localhost:8021/test-square.jpg');
   }
 
