@@ -3,8 +3,7 @@ var React       = require('react'),
   DataInstances = require('./DataInstances.react'),
   RepoHeader    = require('./RepoHeader.react'),
   Messages      = require('./Messages.react'),
-  routes        = require('../common/routes'),
-  config        = require('../common/config');
+  routes        = require('../common/routes');
 
 var DataSelection = React.createClass({
   mixins: [Router.State, Router.Navigation ],
@@ -20,7 +19,7 @@ var DataSelection = React.createClass({
 
   componentDidMount: function () {
     var self = this;
-    $.get(config.repoInfoUrl(this.state.uuid), function(result) {
+    this.props.dvid.get(this.state.uuid, 'info', {}, function(result) {
       var repo = result;
       if (self.isMounted()) {
         self.setState({

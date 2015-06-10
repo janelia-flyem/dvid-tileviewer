@@ -12,7 +12,7 @@ var Home = React.createClass({
 
   // this gets called after the fist time the component is loaded into the page.
   componentDidMount: function () {
-    $.get(config.reposInfoUrl(), function(result) {
+    this.props.dvid.reposInfo(function(result) {
       var repos = result;
       if (this.isMounted()) {
         var repolist = [];

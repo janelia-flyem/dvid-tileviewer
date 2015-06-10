@@ -9,9 +9,18 @@ var React       = require('react'),
   DataSelection = require('./DataSelection.react'),
   Home          = require('./Home.react'),
   NotFound      = require('./NotFound.react'),
-  Nav           = require('./Navigation.react');
+  Nav           = require('./Navigation.react'),
+  dvid          = require('dvid'),
+  config        = require('../common/config');
+
+  dvid.connect({host: config.host, port: config.port});
 
 var TileViewerApp = React.createClass({
+  getInitialState: function () {
+    return {
+      dvid: dvid
+    }
+  },
   render: function () {
     return (
       <div>
@@ -19,7 +28,7 @@ var TileViewerApp = React.createClass({
 
         <div className="container-fluid">
           {/* this is the important part for route handling */}
-          <RouteHandler/>
+          <RouteHandler dvid={this.state.dvid}/>
         </div>
       </div>
     );

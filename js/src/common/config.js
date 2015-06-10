@@ -3,6 +3,11 @@
 //var root = 'http://emrecon100.janelia.priv';
 var root = 'http://emdata1.int.janelia.org:8500';
 //var root = 'http://tem-dvid.int.janelia.org';
+var host = 'emdata1.int.janelia.org';
+var port = 8500;
+
+exports.host = host;
+exports.port = port;
 
 var settings = {
   // the layers at which tile will be fetched from the server. For sources that
