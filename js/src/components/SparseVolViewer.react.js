@@ -194,12 +194,12 @@ function compose_scene(plane, props) {
   add_cut_planes(plane.uuid,scene, plane, props);
 
   if (label) {
-    add_sparse_blocks(plane.uuid, scene, label, plane);
+    add_sparse_blocks(plane.uuid, scene, label, plane, undefined, props);
     // adding in the more complete sparse volume really kills the browser
     // this is probably not viable until either memory or cpu requirements
     // can be figured out.
     //
-    add_sparse(plane.uuid, scene, label, plane);
+    add_sparse(plane.uuid, scene, label, plane, undefined, props);
   }
   add_axis(scene);
 };
@@ -219,16 +219,8 @@ function add_cut_planes(uuid, scene, plane, props) {
 };
 
 
-function add_sparse(uuid, scene, label, plane, color) {
-  var url = dataSource + '/api/node/' + uuid + '/' + plane.bodies + '/sparsevol/' + label;
-
-
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', url, true);
-  xhr.responseType = 'arraybuffer';
-
-  xhr.onload = function(e) {
+function add_sparse(uuid, scene, label, plane, color, props) {
+  var createGeometry = function(e) {
     // response is unsigned 8 bit integer
     var responseArray   = new Uint32Array(this.response);
     var dimensions      = new Uint8Array(this.response,1,1);
@@ -301,19 +293,21 @@ function add_sparse(uuid, scene, label, plane, color) {
     scene.remove(blocks);
 
   };
-  xhr.send();
+
+  props.dvid.node({
+    uuid: uuid,
+    endpoint: plane.bodies + '/sparsevol/' + label,
+    data: true,
+    callback: createGeometry
+  });
 
 };
 
 
-function add_sparse_blocks(uuid, scene, label, plane, color) {
-  var url = dataSource + '/api/node/' + uuid + '/' + plane.bodies + '/sparsevol-coarse/' + label;
+function add_sparse_blocks(uuid, scene, label, plane, color, props) {
   var cube_size = 32; // need to get this from dvid
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', url, true);
-  xhr.responseType = 'arraybuffer';
 
-  xhr.onload = function(e) {
+  var createGeometry = function(e) {
     // response is unsigned 8 bit integer
     var responseArray   = new Uint32Array(this.response);
     var dimensions      = new Uint8Array(this.response,1,1);
@@ -354,7 +348,13 @@ function add_sparse_blocks(uuid, scene, label, plane, color) {
     blocks = group;
 
   };
-  xhr.send();
+
+  props.dvid.node({
+    uuid: uuid,
+    endpoint: plane.bodies + '/sparsevol-coarse/' + label,
+    data: true,
+    callback: createGeometry
+  });
 
 };
 
