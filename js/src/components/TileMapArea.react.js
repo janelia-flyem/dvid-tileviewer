@@ -422,13 +422,13 @@ var TileMapArea = React.createClass({
 
       }
 
-      $.get(config.datatypeInfoUrl(uuid, tileSource), function (tileData) {
+      this.props.dvid.node(uuid, tileSource + '/info', {}, function (tileData) {
 
         var gScaleData = tileData;
 
         if (dataIsTiled) {
           var source = tileData.Extended.Source;
-          $.get(config.datatypeInfoUrl(uuid, source), function(infoData) {
+          this.props.dvid.node(uuid, source + '/info', {}, function(infoData) {
             gScaleData = infoData;
             createTileViewer(gScaleData, tileData);
           });
@@ -605,7 +605,7 @@ var TileMapArea = React.createClass({
 
     var sparse_viewer = '';
     if (this.state.volumeViewer) {
-      sparse_viewer = <SparseVolViewer uuid={this.props.uuid} x={this.state.click_x} y={this.state.click_y} z={this.state.click_z} axis={this.state.click_axis} label={this.state.click_label} closeHandler={this.sparseCloseHandler} labelType={this.props.labelSource} tileSource={this.props.tileSource} />;
+      sparse_viewer = <SparseVolViewer dvid={this.props.dvid} uuid={this.props.uuid} x={this.state.click_x} y={this.state.click_y} z={this.state.click_z} axis={this.state.click_axis} label={this.state.click_label} closeHandler={this.sparseCloseHandler} labelType={this.props.labelSource} tileSource={this.props.tileSource} />;
     }
 
 

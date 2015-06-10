@@ -49,7 +49,7 @@ var SparseVolViewer = React.createClass({
       }
     }
 
-    $.get(config.datatypeInfoUrl(this.props.uuid, this.props.labelType), function(labelInfo) {
+    this.props.dvid.node(this.props.uuid, this.props.labelType + '/info', {}, function(labelInfo) {
 
       // set the ratio we need to scale the z-axis so that it matches the dimensions of the xy plane.
       // typically this will be a ratio of one for iostropic data, but will be larger when the z
