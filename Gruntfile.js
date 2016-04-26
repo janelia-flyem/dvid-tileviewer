@@ -1,51 +1,46 @@
 module.exports = function(grunt) {
-
-  // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    browserify: {
-      options: {
-        transform:  [ require('grunt-react').browserify ]
-      },
-      app:          {
-        src:        'js/src/app.js',
-        dest:       'js/build/bundle.js'
-      }
-    },
     uglify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
       build: {
-        src: 'js/build/bundle.js',
-        dest: 'js/build/bundle.min.js'
+        src: 'build/tileviewer.js',
+        dest: 'build/tileviewer.min.js'
       }
     },
-    copy: {
-      main: {
-        files: [
-          {expand: true, src: ['css/*'], dest: 'dist/', filter: 'isFile'},
-          {expand: true, src: ['index.html'], dest: 'dist/', filter: 'isFile'},
-          {expand: true, src: ['js/build/*'], dest: 'dist/', filter: 'isFile'},
-          {expand: true, src: ['js/vendor/**'], dest: 'dist/', filter: 'isFile'}
-        ]
+    concat: {
+      js: {
+        src: [
+          'js/leaflet-src.js',
+          'js/leaflet.functionaltilelayer.js',
+          'js/Control.MiniMap.min.js',
+          'js/L.Control.CenterCoordinates.js',
+          'js/L.Control.MousePosition.js',
+          'js/tileviewer.js'
+        ],
+        dest: 'build/tileviewer.js'
+      },
+      css: {
+        src: 'css/*.css',
+        dest: 'build/tileviewer.css'
       }
     },
     watch: {
       scripts: {
-        files: ['js/src/**/*.js'],
-        tasks: ['browserify', 'uglify']
+        files: ['js/**/*.js'],
+        tasks: ['default']
       }
     }
   });
 
-  // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-browserify');
+  // Load the plugins
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task(s).
-  grunt.registerTask('default', ['browserify','uglify','copy']);
-
+  grunt.registerTask('default', ['concat', 'uglify']);
 };
