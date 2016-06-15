@@ -293,7 +293,7 @@ var TileViewer = function(opts) {
         .replace('{x}', view.tile.column)
         .replace('{y}', view.tile.row)
         .replace('{zoom}', this.options.maxNativeZoom - view.zoom)
-        .replace('{z}', self.options.current_z ) + '?nav=1';
+        .replace('{z}', self.options.current_z );
       return url;
     }, layer_options);
 
